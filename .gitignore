@@ -1,5 +1,10 @@
+# Generated JS and WASM
+static/LaneLines.*
+
+
 # Build dir
 build/
+cmake-build-debug/
 
 # Prerequisites
 *.d
