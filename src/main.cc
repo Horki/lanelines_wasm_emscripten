@@ -10,6 +10,9 @@ void test() {
   std::cout << CV_MAJOR_VERSION << std::endl;
 }
 
+int increment(int n) { return ++n; }
+
 EMSCRIPTEN_BINDINGS(my_module) {
   emscripten::function("test", &test);
+  emscripten::function("incr", &increment);
 }
