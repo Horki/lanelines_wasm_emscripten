@@ -13,5 +13,12 @@ find_package(OpenCV REQUIRED)
 
 # Add project executable
 add_executable(${PROJECT_NAME} "src/main.cc")
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s DEMANGLE_SUPPORT=1 -O3 --llvm-lto 1 --closure 1 -s WASM=1 --bind")
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES LINK_FLAGS
+    "-O3 \
+    --llvm-lto 1 \
+    --closure 1 \
+    --bind \
+    -s DEMANGLE_SUPPORT=1 \
+    -s WASM=1")
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
