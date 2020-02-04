@@ -9,8 +9,6 @@ Module = {
         //
     },
     print: stdout => output.push(stdout),
-    // Custom function to process stderr: keep in memory
-    print: stderr => console.error(stderr),
 };
 
 document.getElementById('upload')
