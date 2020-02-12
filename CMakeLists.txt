@@ -18,9 +18,10 @@ file(GLOB opencv_include_modules "$ENV{HOME}/opencv/modules/*/include")
 include_directories(${opencv_include_modules})
 
 file(GLOB opencv_core "$ENV{HOME}/opencv/build_wasm/lib/*.a")
+file(GLOB opencv_lib_core "$ENV{HOME}/opencv/build_wasm/lib/libopencv_core.a")
 
 add_executable(${PROJECT_NAME} "src/main.cc")
-target_link_libraries(${PROJECT_NAME} ${opencv_core})
+target_link_libraries(${PROJECT_NAME} ${opencv_core} ${opencv_lib_core})
 set_target_properties(${PROJECT_NAME}
   PROPERTIES LINK_FLAGS
     "-O3 \
@@ -28,7 +29,11 @@ set_target_properties(${PROJECT_NAME}
     --closure 1 \
     --bind \
     -s DEMANGLE_SUPPORT=1 \
+    -s EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap'] \
     -s USE_ZLIB=1 \
     -s WASM=1"
 )
 
+# For Later use!
+#-s ALLOW_MEMORY_GROWTH=1 \
+#-s WASM_OBJECT_FILES=0 \
