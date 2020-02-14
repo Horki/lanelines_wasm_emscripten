@@ -22,7 +22,7 @@ struct Imaag {
     int height;
     int channels;
     int size;
-    int p_addr;
+    int p_addr; // Stored in HEAP
 };
 
 class LaneLines {
@@ -63,6 +63,7 @@ private:
         memoryView.call<void>("set", imgData);
     }
     Imaag to_imag() {
+        // https://emscripten.org/docs/porting/emscripten-runtime-environment.html#emscripten-memory-model
         int size = img_current.cols * img_current.rows * img_current.channels();
         return {
             img_current.cols,                       // Width
