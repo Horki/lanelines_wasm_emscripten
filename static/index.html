@@ -6,10 +6,32 @@
   <title>Lane Lines</title>
 </head>
 <body>
-  <p>Add Photo Form</p>
-  <form>
-    <input type="file" id="upload" />
-  </form>
+<!--  <p>Add Photo Form</p>-->
+<!--  <form>-->
+<!--    <input type="file" id="upload" />-->
+<!--  </form>-->
+
+<!-- Add toggle for wizard steps -->
+<!--  Step 1-->
+  <div>
+    <img id="image1" src="img.jpg" />
+    <button onclick="convert_to_gray()">Convert to gray</button>
+  </div>
+<!--  <img id="result" style="height: fit-content; margin-left: 25px;" />-->
+<!--  Step 2-->
+  <div class="image-wrapper">
+    <canvas id="output-image-1"></canvas>
+    <button onclick="convert_to_gaussian()">Convert to Gaussian</button>
+  </div>
+<!--Step 3-->
+  <div>
+    <canvas id="output-image-2"></canvas>
+    <button onclick="convert_to_canny()">Convert to Canny</button>
+  </div>
+<!--Step 4-->
+<div>
+  <canvas id="output-image-3"></canvas>
+</div>
 </body>
 <script type="text/javascript" src="index.js"></script>
 <script type="text/javascript" src="LaneLines.js"></script>
