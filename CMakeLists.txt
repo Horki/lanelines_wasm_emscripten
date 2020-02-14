@@ -29,7 +29,6 @@ set_target_properties(${PROJECT_NAME}
     --closure 1 \
     --bind \
     -s DEMANGLE_SUPPORT=1 \
-    -s EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap'] \
     -s USE_ZLIB=1 \
     -s WASM=1"
 )
