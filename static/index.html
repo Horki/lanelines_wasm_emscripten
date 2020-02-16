@@ -3,35 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" type="text/css" href="style.css">
   <title>Lane Lines</title>
 </head>
 <body>
-<!--  <p>Add Photo Form</p>-->
-<!--  <form>-->
-<!--    <input type="file" id="upload" />-->
-<!--  </form>-->
-
 <!-- Add toggle for wizard steps -->
 <!--  Step 1-->
   <div>
     <img id="image1" src="img.jpg" />
     <button onclick="convert_to_gray()">Convert to gray</button>
   </div>
-<!--  <img id="result" style="height: fit-content; margin-left: 25px;" />-->
-<!--  Step 2-->
-  <div class="image-wrapper">
+  <div class="step" id="step-1">
+    <form action="javascript: convert_to_gaussian();">
+      <label for="kernel">Kernel</label>
+      <input type="number" min="0" max="125" id="kernel" default="3" required />
+      <label for="sigma_x">Sigma X</label>
+      <input type="number" min="0" max="125" id="sigma_x" default="100" required />
+      <label for="sigma_y">Sigma Y</label>
+      <input type="number" min="0" max="125" id="sigma_y" default="100" required />
+      <input type="submit" value="Convert to Gaussian"  />
+    </form>
     <canvas id="output-image-1"></canvas>
-    <button onclick="convert_to_gaussian()">Convert to Gaussian</button>
   </div>
-<!--Step 3-->
-  <div>
+  <div class="step" id="step-2">
+    <form action="javascript: convert_to_canny();">
+      <label for="threshold_1">Threshold 1</label>
+      <input type="number" min="0" max="125" id="threshold_1" default="10" required />
+      <label for="threshold_2">Threshold 2</label>
+      <input type="number" min="0" max="125" id="threshold_2" default="10" required />
+      <label for="aperture">Aperture</label>
+      <input type="number" min="0" max="125" id="aperture" default="10" required/>
+      <input type="submit" value="Convert to Canny" />
+    </form>
     <canvas id="output-image-2"></canvas>
-    <button onclick="convert_to_canny()">Convert to Canny</button>
   </div>
-<!--Step 4-->
-<div>
-  <canvas id="output-image-3"></canvas>
-</div>
+  <div class="step" id="step-3">
+    <canvas id="output-image-3"></canvas>
+    <button>Convert to Other</button>
+  </div>
 </body>
 <script type="text/javascript" src="index.js"></script>
 <script type="text/javascript" src="LaneLines.js"></script>
