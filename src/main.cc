@@ -42,15 +42,17 @@ public:
         cv::cvtColor(img_current, img_buffer, cv::COLOR_RGBA2GRAY);
     }
     void to_gaussian(int kernel, double sigma_x, double sigma_y) {
+        img_buffer.release();
         cv::GaussianBlur(img_current, img_buffer,
                 cv::Size(kernel, kernel), sigma_x, sigma_y);
     }
     void to_canny(double threshold_1, double threshold_2, int aperture) {
-        cv::Canny(img_current, img_buffer, threshold_1, threshold_2, aperture);
+        img_buffer.release();
+        cv::Canny(img_current, img_buffer,
+                threshold_1, threshold_2, aperture);
     }
     void to_next() {
-//        img_current = std::move(img_buffer);
-        img_current = img_buffer; // copy
+        img_buffer.copyTo(img_current);
     }
     Imaag to_imaag() {
         // https://emscripten.org/docs/porting/emscripten-runtime-environment.html#emscripten-memory-model

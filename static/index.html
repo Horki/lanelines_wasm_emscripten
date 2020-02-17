@@ -9,36 +9,42 @@
 <body>
 <!-- Add toggle for wizard steps -->
 <!--  Step 1-->
-  <div>
+  <div id="step-1">
     <img id="image1" src="img.jpg" />
-    <button onclick="convert_to_gray()">Convert to gray</button>
-  </div>
-  <div class="step" id="step-1">
-    <form action="javascript: convert_to_gaussian();">
-      <label for="kernel">Kernel</label>
-      <input type="number" min="0" max="125" id="kernel" default="3" required />
-      <label for="sigma_x">Sigma X</label>
-      <input type="number" min="0" max="125" id="sigma_x" default="100" required />
-      <label for="sigma_y">Sigma Y</label>
-      <input type="number" min="0" max="125" id="sigma_y" default="100" required />
-      <input type="submit" value="Convert to Gaussian"  />
-    </form>
-    <canvas id="output-image-1"></canvas>
+    <button onclick="convert_to_gray()">Preview</button>
+    <button onclick="convert_to_gray(true)">Next</button>
+    <canvas id="preview-image-1"></canvas>
   </div>
   <div class="step" id="step-2">
-    <form action="javascript: convert_to_canny();">
-      <label for="threshold_1">Threshold 1</label>
-      <input type="number" min="0" max="125" id="threshold_1" default="10" required />
-      <label for="threshold_2">Threshold 2</label>
-      <input type="number" min="0" max="125" id="threshold_2" default="10" required />
-      <label for="aperture">Aperture</label>
-      <input type="number" min="0" max="125" id="aperture" default="10" required/>
-      <input type="submit" value="Convert to Canny" />
+    <form id="form_gaussian" onsubmit='return false'>
+      <label for="kernel">Kernel</label>
+      <input type="number" min="0" max="125" id="kernel" default="5" required />
+      <label for="sigma_x">Sigma X</label>
+      <input type="number" min="0" max="300" id="sigma_x" default="0" required />
+      <label for="sigma_y">Sigma Y</label>
+      <input type="number" min="0" max="300" id="sigma_y" default="0" required />
+      <input type="submit" onclick="convert_to_gaussian(this.form, true)" value="Preview Gaussian"  />
+      <input type="submit" onclick="convert_to_gaussian(this.form)" value="Next"  />
     </form>
     <canvas id="output-image-2"></canvas>
+    <canvas id="preview-image-2"></canvas>
   </div>
   <div class="step" id="step-3">
+    <form id="form_canny" onsubmit='return false'>
+      <label for="threshold_1">Low Threshold</label>
+      <input type="number" min="0" max="300" id="threshold_1" default="128" required />
+      <label for="threshold_2">High Threshold</label>
+      <input type="number" min="0" max="300" id="threshold_2" default="130" required />
+      <label for="aperture">Aperture</label>
+      <input type="number" min="0" max="125" id="aperture" default="3" required/>
+      <input type="submit" onclick="convert_to_canny(this.form, true)" value="Preview Canny" />
+      <input type="submit" onclick="convert_to_canny(this.form)" value="Next" />
+    </form>
     <canvas id="output-image-3"></canvas>
+    <canvas id="preview-image-3"></canvas>
+  </div>
+  <div class="step" id="step-4">
+    <canvas id="output-image-4"></canvas>
     <button>Convert to Other</button>
   </div>
 </body>

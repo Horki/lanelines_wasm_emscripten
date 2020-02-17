@@ -79,7 +79,7 @@ const imageDataFrom1Channel = (data, width, height) => {
     const array = new Uint8ClampedArray(cb);
     data.forEach((pixelValue, index) => {
         const base = index * 4;
-        array[base] = pixelValue;
+        array[base    ] = pixelValue;
         array[base + 1] = pixelValue;
         array[base + 2] = pixelValue;
         array[base + 3] = 255;
@@ -112,45 +112,53 @@ const return_image = (Imaag) => {
     return imageData1;
 };
 
-
-
-const convert_to_gray = () => {
+const convert_to_gray = (n = false) => {
     console.log("Convert to gray");
     let a = LaneLines.to_gray();
     let img = return_image(a);
-    LaneLines.to_next();
-    drawOutputImage(img, 'output-image-1');
-    document.getElementById('step-1').style.display = 'block';
+    if (n) {
+        LaneLines.to_next();
+        drawOutputImage(img, 'output-image-2');
+        document.getElementById('step-1').style.display = 'none';
+        document.getElementById('step-2').style.display = 'block';
+    } else {
+        drawOutputImage(img, 'preview-image-1');
+    }
 };
 
-const convert_to_gaussian = () => {
-    console.log("Convert to gaussian");
-    let kernel  = Number(document.getElementById('kernel').value);
-    let sigma_x = Number(document.getElementById('sigma_x').value);
-    let sigma_y = Number(document.getElementById('sigma_y').value);
+const n = (img, did, preview = false) => {
+    if (!preview) {
+        drawOutputImage(img, `output-image-${did + 1}`);
+        document.getElementById(`step-${did}`).style.display = 'none';
+        document.getElementById(`step-${did + 1}`).style.display = 'block';
+        LaneLines.to_next();
+    } else {
+        drawOutputImage(img, `preview-image-${did}`);
+    }
+};
+
+const convert_to_gaussian = (form, preview = false) => {
+    // console.log("Convert to gaussian");
+    let kernel  = Number(form.kernel.value)  | 1;
+    let sigma_x = Number(form.sigma_x.value) | 0;
+    let sigma_y = Number(form.sigma_y.value) | 0;
     console.log("kernel", kernel, "sigma", sigma_x, "y", sigma_y);
     let a = LaneLines.to_gaussian(kernel, sigma_x, sigma_y);
     let img = return_image(a);
     console.log("bbb");
-    drawOutputImage(img, 'output-image-2');
-    document.getElementById('step-1').style.display = 'none';
-    document.getElementById('step-2').style.display = 'block';
-    LaneLines.to_next();
+    n(img, 2, preview);
 };
 
-const convert_to_canny = () => {
+const convert_to_canny = (form, preview = false) => {
     console.log("Convert to canny");
-    let threshold_1 = 1;
-    let threshold_2 = 100;
-    let aperture   =  3;
-    LaneLines.to_canny(threshold_1, threshold_2, aperture);
-    let a = LaneLines.to_imaag();
+    let threshold_1 = Number(form.threshold_1.value);
+    let threshold_2 = Number(form.threshold_2.value);
+    let aperture    = Number(form.aperture.value);
+
+    let a = LaneLines.to_canny(threshold_1, threshold_2, aperture);
     let img = return_image(a);
     console.log("ccc");
-    drawOutputImage(img, 'output-image-3');
-    document.getElementById('step-2').style.display = 'none';
-    document.getElementById('step-3').style.display = 'block';
-    LaneLines.to_next();
+    n(img, 3, preview);
 };
 
 
