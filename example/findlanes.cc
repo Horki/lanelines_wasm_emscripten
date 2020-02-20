@@ -27,7 +27,7 @@ int main() {
   int aperture      = 3;
   cv::Canny(img_gauss, img_canny, min_thresh, max_thresh, aperture);
 
-  // 4. Hough
+  // 4. Region of Interest
   cv::Mat mask = cv::Mat::zeros(img_canny.rows, img_canny.cols, img_canny.channels());
   int x_size = img_canny.cols;
   int y_size = img_canny.rows;
@@ -36,17 +36,16 @@ int main() {
   int y_a = int(y_size * 0.62);
 
   //https://docs.opencv.org/3.4/d3/d96/tutorial_basic_geometric_drawing.html
-  cv::Point ppt[1][4];
-  ppt[0][0] = cv::Point(0, y_size);
-  ppt[0][1] = cv::Point((x_a - x_b), y_a);
-  ppt[0][2] = cv::Point((x_a + x_b), y_a);
-  ppt[0][3] = cv::Point(x_size, y_size);
-  const cv::Point * p_ppt[1] = { ppt[0] };
-  int npt[] = {20};
-  cv::fillPoly(mask, p_ppt, npt, 1, cv::Scalar(255, 255, 255));
+  std::vector<std::vector<cv::point>> ppt {{
+    cv::Point(0,           y_size),
+    cv::Point((x_a - x_b), y_a),
+    cv::Point((x_a + x_b), y_a)
+    cv::Point(x_size,      y_size)
+  }};
+  cv::fillPoly(mask, ppt, cv::Scalar(255, 255, 255));
   cv::Mat masked_edges;
   cv::bitwise_and(img_canny, img_canny, masked_edges, mask);
-
+  // 5. Hough Lines
   double rho = 1.0;
   double theta = CV_PI / 180.0;
   int threshold = 55;
