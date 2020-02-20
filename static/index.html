@@ -18,11 +18,11 @@
   <div class="step" id="step-2">
     <form id="form_gaussian" onsubmit='return false'>
       <label for="kernel">Kernel</label>
-      <input type="number" min="0" max="125" id="kernel" default="5" required />
+      <input type="number" min="0" max="125" id="kernel" value="5" required />
       <label for="sigma_x">Sigma X</label>
-      <input type="number" min="0" max="300" id="sigma_x" default="0" required />
+      <input type="number" min="0" max="300" id="sigma_x" value="0" required />
       <label for="sigma_y">Sigma Y</label>
-      <input type="number" min="0" max="300" id="sigma_y" default="0" required />
+      <input type="number" min="0" max="300" id="sigma_y" value="0" required />
       <input type="submit" onclick="convert_to_gaussian(this.form, true)" value="Preview Gaussian"  />
       <input type="submit" onclick="convert_to_gaussian(this.form)" value="Next"  />
     </form>
@@ -32,11 +32,11 @@
   <div class="step" id="step-3">
     <form id="form_canny" onsubmit='return false'>
       <label for="threshold_1">Low Threshold</label>
-      <input type="number" min="0" max="300" id="threshold_1" default="128" required />
+      <input type="number" min="0" max="300" id="threshold_1" value="128" required />
       <label for="threshold_2">High Threshold</label>
-      <input type="number" min="0" max="300" id="threshold_2" default="130" required />
+      <input type="number" min="0" max="300" id="threshold_2" value="130" required />
       <label for="aperture">Aperture</label>
-      <input type="number" min="0" max="125" id="aperture" default="3" required/>
+      <input type="number" min="0" max="125" id="aperture" value="3" required/>
       <input type="submit" onclick="convert_to_canny(this.form, true)" value="Preview Canny" />
       <input type="submit" onclick="convert_to_canny(this.form)" value="Next" />
     </form>
@@ -44,8 +44,20 @@
     <canvas id="preview-image-3"></canvas>
   </div>
   <div class="step" id="step-4">
+    <form id="form_region" onsubmit='return false'>
+      <label for="x_1">Point 1 x</label>
+      <input type="number" min="0" max="300" id="x_1" value="130" required />
+      <label for="y_1">Point 1 y</label>
+      <input type="number" min="0" max="300" id="y_1" value="130" required />
+      <label for="x_2">Point 2 x</label>
+      <input type="number" min="0" max="300" id="x_2" value="128" required />
+      <label for="y_2">Point 2 y</label>
+      <input type="number" min="0" max="300" id="y_2" value="130" required />
+      <input type="submit" onclick="convert_to_region(this.form, true)" value="Preview Canny" />
+<!--      <input type="submit" onclick="convert_to_region(this.form)" value="Next" />-->
+    </form>
     <canvas id="output-image-4"></canvas>
-    <button>Convert to Other</button>
+    <canvas id="preview-image-4"></canvas>
   </div>
 </body>
 <script type="text/javascript" src="index.js"></script>

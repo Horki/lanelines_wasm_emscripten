@@ -9,21 +9,29 @@ class Lanes {
         console.log("Load done");
     }
     to_gray() {
-        this.LaneLines.to_gray();
-        return this.to_imaag();
+               this.LaneLines.to_gray();
+        return this.LaneLines.to_imaag();
     }
     to_gaussian(kernel, sigma_x = 0.0, sigma_y = 0.0) {
         // TODO: Check numbers
-        this.LaneLines.to_gaussian(kernel, sigma_x, sigma_y);
-        return this.to_imaag();
+               this.LaneLines.to_gaussian(kernel, sigma_x, sigma_y);
+        return this.LaneLines.to_imaag();
     }
     to_canny(threshold_1 = 0.0, threshold_2 = 0.0, aparture = 0) {
         // TODO: Check numbers
-        this.LaneLines.to_canny(threshold_1, threshold_2, aparture);
-        return this.to_imaag();
+               this.LaneLines.to_canny(threshold_1, threshold_2, aparture);
+        return this.LaneLines.to_imaag();
+    }
+    to_region(x_1, y_1, x_2, y_2) {
+        // TODO: Check numbers
+               this.LaneLines.to_region(x_1, y_1, x_2, y_2);
+        return this.LaneLines.to_imaag();
+    }
+    to_houghes() {
+               this.LaneLines.to_houghes();
+        return this.LaneLines.to_imaag();
     }
     to_next()   {        this.LaneLines.to_next();  }
-    to_imaag()  { return this.LaneLines.to_imaag(); }
     // Helpers
     // static imageDataFrom4Channels(data, width, height) {
     //     if (data instanceof Uint8ClampedArray) {
@@ -70,7 +78,7 @@ const imageDataFrom4Channels = (data, width, height) => {
     }
     const array     = new Uint8ClampedArray(data);
     console.log("array", array);
-    return imageData;
+    return new ImageData(array, width, height);
 };
 
 const imageDataFrom1Channel = (data, width, height) => {
@@ -154,11 +162,44 @@ const convert_to_canny = (form, preview = false) => {
     let threshold_1 = Number(form.threshold_1.value);
     let threshold_2 = Number(form.threshold_2.value);
     let aperture    = Number(form.aperture.value);
-
+    console.log("min threshold", threshold_1, "max threshold", threshold_2, "aperture", aperture);
     let a = LaneLines.to_canny(threshold_1, threshold_2, aperture);
     let img = return_image(a);
     console.log("ccc");
+    if (!preview) {
+        // TODO: refactor to something more meaningful!
+        let x_1 = document.getElementById('x_1');
+        let y_1 = document.getElementById('y_1');
+        let x_2 = document.getElementById('x_2');
+        let y_2 = document.getElementById('y_2');
+        let x_size = img.width;
+        let y_size = img.height;
+        let x_a = Math.trunc(x_size * 0.5);
+        let x_b = Math.trunc(x_size * 0.05);
+        let y_a = Math.trunc(y_size * 0.62);
+        x_1.setAttribute('max', String(x_size));
+        y_1.setAttribute('max', String(y_size));
+        x_2.setAttribute('max', String(x_size));
+        y_2.setAttribute('max', String(y_size));
+        x_1.setAttribute('value', String(Math.trunc(x_a - x_b)));
+        y_1.setAttribute('value', String(y_a));
+        x_2.setAttribute('value', String(Math.trunc(x_a + x_b)));
+        y_2.setAttribute('value', String(y_a));
+    }
     n(img, 3, preview);
+};
+
+const convert_to_region = (form, preview = false) => {
+    console.log("Select region");
+    let x_1 = Number(form.x_1.value);
+    let y_1 = Number(form.y_1.value);
+    let x_2 = Number(form.x_2.value);
+    let y_2 = Number(form.y_2.value);
+    console.log(`Point1(${x_1}, ${y_1}), Point2(${x_2}, ${y_2})`);
+    let a   = LaneLines.to_region(x_1, y_1, x_2, y_2);
+    let img = return_image(a);
+    console.log("ddd");
+    n(img, 4, true);
 };
 
 
