@@ -69,6 +69,8 @@ public:
         assert(x_2 <= img_current.cols);
         assert(y_2 <= img_current.rows);
         cv::Mat mask = cv::Mat::zeros(img_current.rows, img_current.cols, img_current.channels());
+        std::cout << "cc: x_1: " << x_1 << ", y_1: " << y_1 << std::endl;
+        std::cout << "cc: x_2: " << x_2 << ", y_2: " << y_2 << std::endl;
         std::vector<std::vector<cv::Point>> points {{
             cv::Point(0           , img_current.rows),
             cv::Point(int(x_1)        , int(y_1)),
@@ -79,8 +81,21 @@ public:
         // select from canny image by polygon
         cv::bitwise_and(img_current, img_current, img_buffer, mask);
     }
-    void to_houghes() {
-        // TODO: add later
+    void to_houghes(double rho, int threshold,
+            double min_theta, double max_theta, int thickness) {
+        double theta = CV_PI / 180.0;
+        std::vector<cv::Vec4i> lines;
+        cv::HoughLinesP(img_current, lines, rho, theta, threshold, min_theta, max_theta);
+        img_original.copyTo(img_buffer);
+
+        for (const auto & l : lines) {
+            cv::line(img_buffer,
+                     cv::Point(l[0], l[1]),
+                     cv::Point(l[2], l[3]),
+                     cv::Scalar(0, 0, 255), // red
+                     thickness
+            );
+        }
     }
     void to_next() {
         img_buffer.copyTo(img_current);
