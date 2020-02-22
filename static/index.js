@@ -4,7 +4,7 @@ let LaneLines;
 
 class Lanes {
     constructor(module, image) {
-        console.log("tusam");
+        console.log("Start");
         this.LaneLines = new module.LaneLines(image);
         console.log("Load done");
     }
@@ -27,32 +27,12 @@ class Lanes {
                this.LaneLines.to_region(x_1, y_1, x_2, y_2);
         return this.LaneLines.to_imaag();
     }
-    to_houghes() {
-               this.LaneLines.to_houghes();
+    to_houghes(rho, threshold, min_theta, max_theta, thickness) {
+        // TODO: Check numbers
+               this.LaneLines.to_houghes(rho, threshold, min_theta, max_theta, thickness);
         return this.LaneLines.to_imaag();
     }
     to_next()   {        this.LaneLines.to_next();  }
-    // Helpers
-    // static imageDataFrom4Channels(data, width, height) {
-    //     if (data instanceof Uint8ClampedArray) {
-    //         return new ImageData(data, width, height);
-    //     }
-    //     const array = new Uint8ClampedArray(data);
-    //     return new ImageData(array, width, height);
-    // }
-    //
-    // static imageDataFrom1Channel(data, width, height) {
-    //     const cb = width * height * 4;
-    //     const array = new Uint8ClampedArray(cb);
-    //     data.forEach((pixelValue, index) => {
-    //         const base = index * 4;
-    //         array[base] = pixelValue;
-    //         array[base + 1] = pixelValue;
-    //         array[base + 2] = pixelValue;
-    //         array[base + 3] = 255;
-    //     });
-    //     return new ImageData(array, width, height);
-    // }
 }
 
 
@@ -199,7 +179,21 @@ const convert_to_region = (form, preview = false) => {
     let a   = LaneLines.to_region(x_1, y_1, x_2, y_2);
     let img = return_image(a);
     console.log("ddd");
-    n(img, 4, true);
+    n(img, 4, preview);
+};
+
+
+const convert_to_houghes = (form, preview = false) => {
+    console.log("Select region");
+    let rho = Number(form.rho.value);
+    let threshold = Number(form.threshold.value);
+    let min_theta = Number(form.min_theta.value);
+    let max_theta = Number(form.max_theta.value);
+    let thickness = Number(form.thickness.value);
+    let a   = LaneLines.to_houghes(rho, threshold, min_theta, max_theta, thickness);
+    let img = return_image(a);
+    console.log("eee");
+    n(img, 5, preview);
 };
 
 

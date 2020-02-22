@@ -54,11 +54,29 @@
       <label for="y_2">Point 2 y</label>
       <input type="number" min="0" max="300" id="y_2" value="130" required />
       <input type="submit" onclick="convert_to_region(this.form, true)" value="Preview Canny" />
-<!--      <input type="submit" onclick="convert_to_region(this.form)" value="Next" />-->
+      <input type="submit" onclick="convert_to_region(this.form)" value="Next" />
     </form>
     <canvas id="output-image-4"></canvas>
     <canvas id="preview-image-4"></canvas>
   </div>
+  <div class="step" id="step-5">
+    <form id="form_houghes" onsubmit='return false'>
+      <label for="rho">Rho</label>
+      <input type="number" min="0" max="10" id="rho" value="1" required />
+      <label for="threshold">Threshold</label>
+      <input type="number" min="0" max="100" id="threshold" value="55" required />
+      <label for="min_theta">Min Theta</label>
+      <input type="number" min="0" max="300" id="min_theta" value="50" required />
+      <label for="max_theta">Max Theta</label>
+      <input type="number" min="0" max="300" id="max_theta" value="150" required />
+      <label for="thickness">Thickness</label>
+      <input type="number" min="0" max="10" id="thickness" value="5" required />
+      <input type="submit" onclick="convert_to_houghes(this.form, true)" value="Preview Canny" />
+    </form>
+    <canvas id="output-image-5"></canvas>
+    <canvas id="preview-image-5"></canvas>
+  </div>
+
 </body>
 <script type="text/javascript" src="index.js"></script>
 <script type="text/javascript" src="LaneLines.js"></script>
