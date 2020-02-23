@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <iterator>
 #include <vector>
+#include <iomanip>
+#include <chrono>
+#include <ctime>
 #include <cassert>
 
 // Emscripten
@@ -13,10 +16,8 @@
 #include <emscripten/val.h>
 
 // OpenCV
-#include <opencv2/core/mat.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 
 struct Imaag {
@@ -27,6 +28,31 @@ struct Imaag {
     int p_addr; // Stored in HEAP
 };
 
+class TimeDiff {
+private:
+    std::clock_t start, stop;
+    std::chrono::high_resolution_clock::time_point t_start, t_stop;
+    std::string s;
+public:
+    TimeDiff(const std::string & s) : s(s), start(std::clock()),
+                 t_start(std::chrono::high_resolution_clock::now()) {}
+    ~TimeDiff() {
+        stop   = std::clock();
+        t_stop = std::chrono::high_resolution_clock::now();
+        auto t_duration = std::chrono::duration<double, std::milli>
+                (t_stop - t_start).count();
+        auto duration = stop - start;
+        std::cout << std::fixed << std::setprecision(2)
+                  << s
+                  << "it took: " << duration << " clicks, "
+                  << " CPU time used: "
+                  << ((1000.0 * duration) / CLOCKS_PER_SEC)
+                  << " ms; Wall clock time "
+                  << t_duration
+                  << " ms" << std::endl;
+    }
+};
+
 class LaneLines {
 private:
     cv::Mat img_original;
@@ -34,7 +60,8 @@ private:
     cv::Mat img_buffer;
 public:
     LaneLines(emscripten::val const & js_image) {
-        convert_to_mat(js_image);
+        TimeDiff t("cc: Constructor: ");
+        convertToMat(js_image);
         img_original.copyTo(img_current); // copy
     }
     LaneLines(const cv::Mat & img) {
@@ -48,20 +75,24 @@ public:
     ~LaneLines() {
         std::cout << "Here I will do some memory GC" << std::endl;
     }
-    void to_gray() {
+    void toGray() {
+        TimeDiff t("cc: toGray(): ");
         cv::cvtColor(img_current, img_buffer, cv::COLOR_RGBA2GRAY);
     }
-    void to_gaussian(int kernel, double sigma_x, double sigma_y) {
+    void toGaussian(int kernel, double sigma_x, double sigma_y) {
+        TimeDiff t("cc: toGaussian() ");
         img_buffer.release();
         cv::GaussianBlur(img_current, img_buffer,
                 cv::Size(kernel, kernel), sigma_x, sigma_y);
     }
-    void to_canny(double threshold_1, double threshold_2, int aperture) {
+    void toCanny(double threshold_1, double threshold_2, int aperture) {
+        TimeDiff t("cc: toCanny() ");
         img_buffer.release();
         cv::Canny(img_current, img_buffer,
                 threshold_1, threshold_2, aperture);
     }
-    void to_region(size_t x_1, size_t y_1, size_t x_2, size_t y_2) {
+    void toRegion(size_t x_1, size_t y_1, size_t x_2, size_t y_2) {
+        TimeDiff t("cc: toRegion() ");
         img_buffer.release();
         // https://docs.opencv.org/3.4/d3/d96/tutorial_basic_geometric_drawing.html
         assert(x_1 <= img_current.cols);
@@ -81,8 +112,9 @@ public:
         // select from canny image by polygon
         cv::bitwise_and(img_current, img_current, img_buffer, mask);
     }
-    void to_houghes(double rho, int threshold,
-            double min_theta, double max_theta, int thickness) {
+    void toHoughes(double rho, int threshold,
+                   double min_theta, double max_theta, int thickness) {
+        TimeDiff t("cc: toHoughes() ");
         double theta = CV_PI / 180.0;
         std::vector<cv::Vec4i> lines;
         cv::HoughLinesP(img_current, lines, rho, theta, threshold, min_theta, max_theta);
@@ -97,10 +129,12 @@ public:
             );
         }
     }
-    void to_next() {
+    void toNext() {
+        TimeDiff t("cc: toNext() ");
         img_buffer.copyTo(img_current);
     }
-    Imaag to_imaag() {
+    Imaag getImaag() {
+        TimeDiff t("cc: getImaag() ");
         // https://emscripten.org/docs/porting/emscripten-runtime-environment.html#emscripten-memory-model
         int size = img_buffer.cols * img_buffer.rows * img_buffer.channels();
         return {
@@ -114,7 +148,8 @@ public:
 
 private:
     // TODO: Find a better way!
-    void convert_to_mat(emscripten::val const & js_image) {
+    void convertToMat(emscripten::val const & js_image) {
+        TimeDiff t("cc: convertToMat() ");
         auto w       = js_image["width"].as<unsigned long>();
         auto h       = js_image["height"].as<unsigned long>();
         auto imgData = js_image["data"].as<emscripten::val>();
@@ -148,13 +183,13 @@ EMSCRIPTEN_BINDINGS(my_module) {
 
   emscripten::class_<LaneLines>("LaneLines")
       .constructor<emscripten::val const &>()
-      .function("to_gray",     &LaneLines::to_gray,     emscripten::allow_raw_pointers())
-      .function("to_gaussian", &LaneLines::to_gaussian, emscripten::allow_raw_pointers())
-      .function("to_canny",    &LaneLines::to_canny,    emscripten::allow_raw_pointers())
-      .function("to_region",   &LaneLines::to_region,   emscripten::allow_raw_pointers())
-      .function("to_houghes",  &LaneLines::to_houghes,  emscripten::allow_raw_pointers())
-      .function("to_next",     &LaneLines::to_next,     emscripten::allow_raw_pointers())
-      .function("to_imaag",    &LaneLines::to_imaag,    emscripten::allow_raw_pointers());
+      .function("toGray",     &LaneLines::toGray,     emscripten::allow_raw_pointers())
+      .function("toGaussian", &LaneLines::toGaussian, emscripten::allow_raw_pointers())
+      .function("toCanny",    &LaneLines::toCanny,    emscripten::allow_raw_pointers())
+      .function("toRegion",   &LaneLines::toRegion,   emscripten::allow_raw_pointers())
+      .function("toHoughes",  &LaneLines::toHoughes,  emscripten::allow_raw_pointers())
+      .function("toNext",     &LaneLines::toNext,     emscripten::allow_raw_pointers())
+      .function("getImaag",   &LaneLines::getImaag,   emscripten::allow_raw_pointers());
   emscripten::value_object<Imaag>("Imaag")
     .field("width",    &Imaag::width)
     .field("height",   &Imaag::height)
