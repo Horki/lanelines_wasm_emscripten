@@ -1,6 +1,6 @@
 'use strict';
 
-let LaneLines;
+let laneLines;
 
 class Lanes {
     constructor(module, image) {
@@ -8,31 +8,46 @@ class Lanes {
         this.LaneLines = new module.LaneLines(image);
         console.log("Load done");
     }
-    to_gray() {
-               this.LaneLines.to_gray();
-        return this.LaneLines.to_imaag();
+    toGray() {
+               this.LaneLines.toGray();
+        return this.LaneLines.getImaag();
     }
-    to_gaussian(kernel, sigma_x = 0.0, sigma_y = 0.0) {
-        // TODO: Check numbers
-               this.LaneLines.to_gaussian(kernel, sigma_x, sigma_y);
-        return this.LaneLines.to_imaag();
+    toGaussian(form) {
+        let kernel  = +form["kernel"].value;
+        let sigma_x = +form["sigma-x"].value;
+        let sigma_y = +form["sigma-y"].value;
+
+               this.LaneLines.toGaussian(kernel, sigma_x, sigma_y);
+        return this.LaneLines.getImaag();
     }
-    to_canny(threshold_1 = 0.0, threshold_2 = 0.0, aparture = 0) {
-        // TODO: Check numbers
-               this.LaneLines.to_canny(threshold_1, threshold_2, aparture);
-        return this.LaneLines.to_imaag();
+    toCanny(form) {
+        let threshold_1 = +form["threshold-1"].value;
+        let threshold_2 = +form["threshold-2"].value;
+        let aperture    = +form["aperture"].value;
+
+               this.LaneLines.toCanny(threshold_1, threshold_2, aperture);
+        return this.LaneLines.getImaag();
     }
-    to_region(x_1, y_1, x_2, y_2) {
-        // TODO: Check numbers
-               this.LaneLines.to_region(x_1, y_1, x_2, y_2);
-        return this.LaneLines.to_imaag();
+    toRegion(form) {
+        let x_1 = +form["x-1"].value;
+        let y_1 = +form["y-1"].value;
+        let x_2 = +form["x-2"].value;
+        let y_2 = +form["y-2"].value;
+
+               this.LaneLines.toRegion(x_1, y_1, x_2, y_2);
+        return this.LaneLines.getImaag();
     }
-    to_houghes(rho, threshold, min_theta, max_theta, thickness) {
-        // TODO: Check numbers
-               this.LaneLines.to_houghes(rho, threshold, min_theta, max_theta, thickness);
-        return this.LaneLines.to_imaag();
+    toHoughes(form) {
+        let rho       =  +form["rho"].value;
+        let threshold =  +form["threshold"].value;
+        let min_theta =  +form["min-theta"].value;
+        let max_theta =  +form["max-theta"].value;
+        let thickness =  +form["thickness"].value;
+
+               this.LaneLines.toHoughes(rho, threshold, min_theta, max_theta, thickness);
+        return this.LaneLines.getImaag();
     }
-    to_next()   {        this.LaneLines.to_next();  }
+    toNext()   {        this.LaneLines.toNext();  }
 }
 
 
@@ -42,11 +57,15 @@ window.Module = {
         console.log("preInit");
     },
     onRuntimeInitialized: () => {
-        const {data, width, height} = get_image();
+        const {data, width, height} = getImage();
         let i = imageDataFrom4Channels(data, width, height);
         console.log("W = ", width, " H = ", height);
-        LaneLines = new Lanes(window.Module, i);
+        laneLines = new Lanes(window.Module, i);
     },
+    // Custom function to process stdout: show in console as debug
+    print:      stdout => console.debug(stdout),
+    // Custom function to process stderr: show in console as errors
+    printError: stderr => console.error(stderr),
 };
 
 
@@ -89,7 +108,7 @@ const drawOutputImage = (imageData, canvasId) => {
 };
 
 
-const return_image = (Imaag) => {
+const returnImage = (Imaag) => {
     const outImage1Data =
         window.Module.HEAPU8.slice(Imaag.p_addr, Imaag.p_addr + Imaag.size);
     const imageData1 = Imaag.channels === 1
@@ -100,109 +119,49 @@ const return_image = (Imaag) => {
     return imageData1;
 };
 
-const convert_to_gray = (n = false) => {
-    console.log("Convert to gray");
-    let a = LaneLines.to_gray();
-    let img = return_image(a);
-    if (n) {
-        LaneLines.to_next();
-        drawOutputImage(img, 'output-image-2');
-        document.getElementById('step-1').style.display = 'none';
-        document.getElementById('step-2').style.display = 'block';
-    } else {
-        drawOutputImage(img, 'preview-image-1');
-    }
+const convertTo = (form, preview = false) => {
+    const id = +form.id;
+    let a = laneLines[form.name](form);
+    let img = returnImage(a);
+    n(img, id, preview);
 };
 
-const n = (img, did, preview = false) => {
+const n = (img, did = 1, preview = false) => {
     if (!preview) {
         drawOutputImage(img, `output-image-${did + 1}`);
         document.getElementById(`step-${did}`).style.display = 'none';
         document.getElementById(`step-${did + 1}`).style.display = 'block';
-        LaneLines.to_next();
+        laneLines.toNext();
     } else {
         drawOutputImage(img, `preview-image-${did}`);
     }
 };
 
-const convert_to_gaussian = (form, preview = false) => {
-    // console.log("Convert to gaussian");
-    let kernel  = Number(form.kernel.value)  | 1;
-    let sigma_x = Number(form.sigma_x.value) | 0;
-    let sigma_y = Number(form.sigma_y.value) | 0;
-    console.log("kernel", kernel, "sigma", sigma_x, "y", sigma_y);
-    let a = LaneLines.to_gaussian(kernel, sigma_x, sigma_y);
-    let img = return_image(a);
-    console.log("bbb");
-    n(img, 2, preview);
-};
-
-const convert_to_canny = (form, preview = false) => {
-    console.log("Convert to canny");
-    let threshold_1 = Number(form.threshold_1.value);
-    let threshold_2 = Number(form.threshold_2.value);
-    let aperture    = Number(form.aperture.value);
-    console.log("min threshold", threshold_1, "max threshold", threshold_2, "aperture", aperture);
-    let a = LaneLines.to_canny(threshold_1, threshold_2, aperture);
-    let img = return_image(a);
-    console.log("ccc");
-    if (!preview) {
-        // TODO: refactor to something more meaningful!
-        let x_1 = document.getElementById('x_1');
-        let y_1 = document.getElementById('y_1');
-        let x_2 = document.getElementById('x_2');
-        let y_2 = document.getElementById('y_2');
+const getImage = () => {
+    let canvas  = document.createElement('canvas');
+    let context = canvas.getContext('2d');
+    let img     = document.getElementById('image-1');
+    canvas.width  = img.width;
+    canvas.height = img.height;
+    context.drawImage(img, 0, 0 );
+    {
+        let x_1 = document.getElementById('x-1');
+        let y_1 = document.getElementById('y-1');
+        let x_2 = document.getElementById('x-2');
+        let y_2 = document.getElementById('y-2');
         let x_size = img.width;
         let y_size = img.height;
         let x_a = Math.trunc(x_size * 0.5);
         let x_b = Math.trunc(x_size * 0.05);
         let y_a = Math.trunc(y_size * 0.62);
-        x_1.setAttribute('max', String(x_size));
-        y_1.setAttribute('max', String(y_size));
-        x_2.setAttribute('max', String(x_size));
-        y_2.setAttribute('max', String(y_size));
+        x_1.setAttribute('max',   String(x_size));
+        y_1.setAttribute('max',   String(y_size));
+        x_2.setAttribute('max',   String(x_size));
+        y_2.setAttribute('max',   String(y_size));
         x_1.setAttribute('value', String(Math.trunc(x_a - x_b)));
         y_1.setAttribute('value', String(y_a));
         x_2.setAttribute('value', String(Math.trunc(x_a + x_b)));
         y_2.setAttribute('value', String(y_a));
     }
-    n(img, 3, preview);
-};
-
-const convert_to_region = (form, preview = false) => {
-    console.log("Select region");
-    let x_1 = Number(form.x_1.value);
-    let y_1 = Number(form.y_1.value);
-    let x_2 = Number(form.x_2.value);
-    let y_2 = Number(form.y_2.value);
-    console.log(`Point1(${x_1}, ${y_1}), Point2(${x_2}, ${y_2})`);
-    let a   = LaneLines.to_region(x_1, y_1, x_2, y_2);
-    let img = return_image(a);
-    console.log("ddd");
-    n(img, 4, preview);
-};
-
-
-const convert_to_houghes = (form, preview = false) => {
-    console.log("Select region");
-    let rho = Number(form.rho.value);
-    let threshold = Number(form.threshold.value);
-    let min_theta = Number(form.min_theta.value);
-    let max_theta = Number(form.max_theta.value);
-    let thickness = Number(form.thickness.value);
-    let a   = LaneLines.to_houghes(rho, threshold, min_theta, max_theta, thickness);
-    let img = return_image(a);
-    console.log("eee");
-    n(img, 5, preview);
-};
-
-
-const get_image = () => {
-    let canvas  = document.createElement('canvas');
-    let context = canvas.getContext('2d');
-    let img     = document.getElementById('image1');
-    canvas.width  = img.width;
-    canvas.height = img.height;
-    context.drawImage(img, 0, 0 );
     return context.getImageData(0, 0, img.width, img.height);
 };

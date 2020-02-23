@@ -7,76 +7,75 @@
   <title>Lane Lines</title>
 </head>
 <body>
-<!-- Add toggle for wizard steps -->
-<!--  Step 1-->
   <div id="step-1">
-    <img id="image1" src="img.jpg" />
-    <button onclick="convert_to_gray()">Preview</button>
-    <button onclick="convert_to_gray(true)">Next</button>
+    <form id="1" name="toGray" onsubmit="return false">
+      <input type="submit" onclick="convertTo(this.form, true)" value="Preview"  />
+      <input type="submit" onclick="convertTo(this.form)" value="Next"  />
+    </form>
+    <img id="image-1" src="img.jpg" />
     <canvas id="preview-image-1"></canvas>
   </div>
   <div class="step" id="step-2">
-    <form id="form_gaussian" onsubmit='return false'>
+    <form id="2" name="toGaussian" onsubmit='return false'>
       <label for="kernel">Kernel</label>
       <input type="number" min="0" max="125" id="kernel" value="5" required />
-      <label for="sigma_x">Sigma X</label>
-      <input type="number" min="0" max="300" id="sigma_x" value="0" required />
-      <label for="sigma_y">Sigma Y</label>
-      <input type="number" min="0" max="300" id="sigma_y" value="0" required />
-      <input type="submit" onclick="convert_to_gaussian(this.form, true)" value="Preview Gaussian"  />
-      <input type="submit" onclick="convert_to_gaussian(this.form)" value="Next"  />
+      <label for="sigma-x">Sigma X</label>
+      <input type="number" min="0" max="300" id="sigma-x" value="0" required />
+      <label for="sigma-y">Sigma Y</label>
+      <input type="number" min="0" max="300" id="sigma-y" value="0" required />
+      <input type="submit" onclick="convertTo(this.form, true)" value="Preview Gaussian"  />
+      <input type="submit" onclick="convertTo(this.form)" value="Next"  />
     </form>
     <canvas id="output-image-2"></canvas>
     <canvas id="preview-image-2"></canvas>
   </div>
   <div class="step" id="step-3">
-    <form id="form_canny" onsubmit='return false'>
-      <label for="threshold_1">Low Threshold</label>
-      <input type="number" min="0" max="300" id="threshold_1" value="128" required />
-      <label for="threshold_2">High Threshold</label>
-      <input type="number" min="0" max="300" id="threshold_2" value="130" required />
+    <form id="3" name="toCanny" onsubmit='return false'>
+      <label for="threshold-1">Low Threshold</label>
+      <input type="number" min="0" max="300" id="threshold-1" value="128" required />
+      <label for="threshold-2">High Threshold</label>
+      <input type="number" min="0" max="300" id="threshold-2" value="130" required />
       <label for="aperture">Aperture</label>
       <input type="number" min="0" max="125" id="aperture" value="3" required/>
-      <input type="submit" onclick="convert_to_canny(this.form, true)" value="Preview Canny" />
-      <input type="submit" onclick="convert_to_canny(this.form)" value="Next" />
+      <input type="submit" onclick="convertTo(this.form, true)" value="Preview Canny" />
+      <input type="submit" onclick="convertTo(this.form)" value="Next" />
     </form>
     <canvas id="output-image-3"></canvas>
     <canvas id="preview-image-3"></canvas>
   </div>
   <div class="step" id="step-4">
-    <form id="form_region" onsubmit='return false'>
-      <label for="x_1">Point 1 x</label>
-      <input type="number" min="0" max="300" id="x_1" value="130" required />
-      <label for="y_1">Point 1 y</label>
-      <input type="number" min="0" max="300" id="y_1" value="130" required />
-      <label for="x_2">Point 2 x</label>
-      <input type="number" min="0" max="300" id="x_2" value="128" required />
-      <label for="y_2">Point 2 y</label>
-      <input type="number" min="0" max="300" id="y_2" value="130" required />
-      <input type="submit" onclick="convert_to_region(this.form, true)" value="Preview Canny" />
-      <input type="submit" onclick="convert_to_region(this.form)" value="Next" />
+    <form id="4" name="toRegion" onsubmit='return false'>
+      <label for="x-1">Point 1 x</label>
+      <input type="number" min="0" max="300" id="x-1" value="130" required />
+      <label for="y-1">Point 1 y</label>
+      <input type="number" min="0" max="300" id="y-1" value="130" required />
+      <label for="x-2">Point 2 x</label>
+      <input type="number" min="0" max="300" id="x-2" value="128" required />
+      <label for="y-2">Point 2 y</label>
+      <input type="number" min="0" max="300" id="y-2" value="130" required />
+      <input type="submit" onclick="convertTo(this.form, true)" value="Preview Region of Interest" />
+      <input type="submit" onclick="convertTo(this.form)" value="Next" />
     </form>
     <canvas id="output-image-4"></canvas>
     <canvas id="preview-image-4"></canvas>
   </div>
   <div class="step" id="step-5">
-    <form id="form_houghes" onsubmit='return false'>
+    <form id="5" name="toHoughes" onsubmit='return false'>
       <label for="rho">Rho</label>
       <input type="number" min="0" max="10" id="rho" value="1" required />
       <label for="threshold">Threshold</label>
       <input type="number" min="0" max="100" id="threshold" value="55" required />
-      <label for="min_theta">Min Theta</label>
-      <input type="number" min="0" max="300" id="min_theta" value="50" required />
-      <label for="max_theta">Max Theta</label>
-      <input type="number" min="0" max="300" id="max_theta" value="150" required />
+      <label for="min-theta">Min Theta</label>
+      <input type="number" min="0" max="300" id="min-theta" value="50" required />
+      <label for="max-theta">Max Theta</label>
+      <input type="number" min="0" max="300" id="max-theta" value="150" required />
       <label for="thickness">Thickness</label>
       <input type="number" min="0" max="10" id="thickness" value="5" required />
-      <input type="submit" onclick="convert_to_houghes(this.form, true)" value="Preview Canny" />
+      <input type="submit" onclick="convertTo(this.form, true)" value="Preview Houghes" />
     </form>
     <canvas id="output-image-5"></canvas>
     <canvas id="preview-image-5"></canvas>
   </div>
-
 </body>
 <script type="text/javascript" src="index.js"></script>
 <script type="text/javascript" src="LaneLines.js"></script>
