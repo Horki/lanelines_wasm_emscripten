@@ -8,8 +8,13 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-int main() {
-  cv::Mat img_original = cv::imread("img.jpg");
+int main(int argc, const char * argv[]) {
+  if (argc != 2) {
+    std::cerr << "usage\n";
+    std::cerr << "/bin/opencv ../../img/img.jpg";
+    return -1;
+  }
+  cv::Mat img_original = cv::imread(argv[1]);
   cv::Mat img_gray, img_gauss, img_canny, img_res;
   img_original.copyTo(img_res);
   // 1. Convert to gray
