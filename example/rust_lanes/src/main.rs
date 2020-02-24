@@ -53,6 +53,7 @@ fn main() {
     .unwrap();
 
     // 4 Region of Interest
+    // as here in dox https://git.io/Jv0A7
     let x_size = img_canny.cols().unwrap();
     let y_size = img_canny.rows().unwrap();
     let x_a = (x_size as f32 * 0.50) as i32;
