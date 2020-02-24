@@ -10,7 +10,8 @@ use std::{env, process};
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
-        eprintln!("need path to img");
+        eprintln!("usage");
+        eprintln!("cargo run ../../img/img.jpg");
         process::exit(1);
     }
     let img_original   = imgcodecs::imread(&args[1], imgcodecs::IMREAD_COLOR).unwrap();
