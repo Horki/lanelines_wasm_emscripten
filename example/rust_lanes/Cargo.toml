@@ -1,0 +1,9 @@
+[package]
+name = "rust_lanes"
+version = "0.1.0"
+authors = ["Horki <ivanzvonimirhorvat@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+opencv = "0.29.3"
+# opencv = {version = "0.29.3", default-features = false, features = ["opencv-34"]}
