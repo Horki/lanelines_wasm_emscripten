@@ -6,6 +6,8 @@ class Lanes {
     constructor(module, image) {
         console.log("Start");
         this.LaneLines = new module.LaneLines(image);
+        this.width  = image.width;
+        this.height = image.height;
         console.log("Load done");
     }
     toGray() {
@@ -16,6 +18,9 @@ class Lanes {
         let kernel  = +form["kernel"].value;
         let sigma_x = +form["sigma-x"].value;
         let sigma_y = +form["sigma-y"].value;
+        console.assert((kernel >= 0) && (kernel <= 125), "Kernel should be [0, 125]");
+        console.assert((sigma_x >= 0) && (sigma_x <= 300), "Sigma X should be [0, 300]");
+        console.assert((sigma_y >= 0) && (sigma_y <= 300), "Sigma Y should be [0, 300]");
 
                this.LaneLines.toGaussian(kernel, sigma_x, sigma_y);
         return this.LaneLines.getImaag();
@@ -24,6 +29,10 @@ class Lanes {
         let threshold_1 = +form["threshold-1"].value;
         let threshold_2 = +form["threshold-2"].value;
         let aperture    = +form["aperture"].value;
+        console.assert((threshold_1 >= 0) && (threshold_1 <= 300), "Min Threshold should be [0, 300]");
+        console.assert((threshold_2 >= 0) && (threshold_2 <= 300), "Max Threshold should be [0, 300]");
+        console.assert(threshold_2 > threshold_1, "Max threshold should be bigger");
+        console.assert((aperture >= 0) && (aperture <= 125), "Aperture should be [0, 150]");
 
                this.LaneLines.toCanny(threshold_1, threshold_2, aperture);
         return this.LaneLines.getImaag();
@@ -33,6 +42,10 @@ class Lanes {
         let y_1 = +form["y-1"].value;
         let x_2 = +form["x-2"].value;
         let y_2 = +form["y-2"].value;
+        console.assert((x_1 >= 0) && (x_1 <= this.width), `Point 1 X should be [0, ${this.width}]`);
+        console.assert((y_1 >= 0) && (y_1 <= this.height), `Point 1 Y should be [0, ${this.height}]`);
+        console.assert((x_2 >= 0) && (x_2 <= this.width), `Point 2 X should be [0, ${this.width}]`);
+        console.assert((y_2 >= 0) && (y_2 <= this.height), `Point 2 Y should be [0, ${this.height}]`);
 
                this.LaneLines.toRegion(x_1, y_1, x_2, y_2);
         return this.LaneLines.getImaag();
@@ -43,6 +56,12 @@ class Lanes {
         let min_theta =  +form["min-theta"].value;
         let max_theta =  +form["max-theta"].value;
         let thickness =  +form["thickness"].value;
+        console.assert((rho >= 0) && (rho <= 10), "Rho should be [0, 10]");
+        console.assert((threshold >= 0) && (threshold <= 100), "Threshold should be [0, 100]");
+        console.assert((min_theta >= 0) && (min_theta <= 300), "Min theta should be [0, 300]");
+        console.assert((max_theta >= 0) && (max_theta <= 300), "Max theta should be [0, 300]");
+        console.assert(min_theta < max_theta, "Max Theta is bigger!!!");
+        console.assert((thickness >= 0) && (thickness <= 10), "Thickness should be [0, 10]");
 
                this.LaneLines.toHoughes(rho, threshold, min_theta, max_theta, thickness);
         return this.LaneLines.getImaag();
@@ -96,6 +115,7 @@ const imageDataFrom1Channel = (data, width, height) => {
 };
 
 const drawOutputImage = (imageData, canvasId) => {
+    // console.memory
     console.log('[drawOutputImage]');
     const canvas = document.getElementById(canvasId);
     console.log("canvas", canvas);
@@ -107,15 +127,18 @@ const drawOutputImage = (imageData, canvasId) => {
     ctx.putImageData(imageData, 0, 0);
 };
 
-
+// https://shockry.blogspot.com/2017/04/webassembly-sending-javascript-array-to.html
 const returnImage = (Imaag) => {
-    const outImage1Data =
+    const buffer =
         window.Module.HEAPU8.slice(Imaag.p_addr, Imaag.p_addr + Imaag.size);
     const imageData1 = Imaag.channels === 1
-        ? imageDataFrom1Channel(outImage1Data,  Imaag.width, Imaag.height)
-        : imageDataFrom4Channels(outImage1Data, Imaag.width, Imaag.height);
+        ? imageDataFrom1Channel(buffer,  Imaag.width, Imaag.height)
+        : imageDataFrom4Channels(buffer, Imaag.width, Imaag.height);
     // TODO: free heap?
-    // module._free(imageData1);
+    // window.Module.HEAP8._fr
+    console.log("before", buffer);
+    window.Module._free(buffer);
+    console.log("after", buffer);
     return imageData1;
 };
 
@@ -162,6 +185,7 @@ const getImage = () => {
         y_1.setAttribute('value', String(y_a));
         x_2.setAttribute('value', String(Math.trunc(x_a + x_b)));
         y_2.setAttribute('value', String(y_a));
+        document.getElementById(`step-1`).style.display = 'block';
     }
     return context.getImageData(0, 0, img.width, img.height);
 };
