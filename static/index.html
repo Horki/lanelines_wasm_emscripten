@@ -8,7 +8,7 @@
 </head>
 <body>
   <div class="step" id="step-1">
-    <form id="1" name="toGray" onsubmit="return false">
+    <form class="form-inline" id="1" name="toGray" onsubmit="return false">
       <input type="submit" onclick="convertTo(this.form, true)" value="Preview"  />
       <input type="submit" onclick="convertTo(this.form)" value="Next"  />
     </form>
@@ -16,7 +16,7 @@
     <canvas id="preview-image-1"></canvas>
   </div>
   <div class="step" id="step-2">
-    <form id="2" name="toGaussian" onsubmit='return false'>
+    <form class="form-inline" id="2" name="toGaussian" onsubmit='return false'>
       <label for="kernel">Kernel</label>
       <input type="number" min="0" max="125" id="kernel" value="5" required />
       <label for="sigma-x">Sigma X</label>
@@ -30,7 +30,7 @@
     <canvas id="preview-image-2"></canvas>
   </div>
   <div class="step" id="step-3">
-    <form id="3" name="toCanny" onsubmit='return false'>
+    <form class="form-inline" id="3" name="toCanny" onsubmit='return false'>
       <label for="threshold-1">Low Threshold</label>
       <input type="number" min="0" max="300" id="threshold-1" value="128" required />
       <label for="threshold-2">High Threshold</label>
@@ -44,7 +44,7 @@
     <canvas id="preview-image-3"></canvas>
   </div>
   <div class="step" id="step-4">
-    <form id="4" name="toRegion" onsubmit='return false'>
+    <form class="form-inline" id="4" name="toRegion" onsubmit='return false'>
       <label for="x-1">Point 1 x</label>
       <input type="number" min="0" max="300" id="x-1" value="130" required />
       <label for="y-1">Point 1 y</label>
@@ -60,7 +60,7 @@
     <canvas id="preview-image-4"></canvas>
   </div>
   <div class="step" id="step-5">
-    <form id="5" name="toHoughes" onsubmit='return false'>
+    <form class="form-inline" id="5" name="toHoughes" onsubmit='return false'>
       <label for="rho">Rho</label>
       <input type="number" min="0" max="10" id="rho" value="1" required />
       <label for="threshold">Threshold</label>
