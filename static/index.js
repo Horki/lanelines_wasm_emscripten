@@ -89,18 +89,14 @@ window.Module = {
 
 
 const imageDataFrom4Channels = (data, width, height) => {
-    console.log('[imageDataFrom4Channels]');
-    console.log("data", data);
     if (data instanceof Uint8ClampedArray) {
         return new ImageData(data, width, height);
     }
     const array     = new Uint8ClampedArray(data);
-    console.log("array", array);
     return new ImageData(array, width, height);
 };
 
 const imageDataFrom1Channel = (data, width, height) => {
-    console.log('[imageDataFrom1Channel]');
     const cb = width * height * 4;
     const array = new Uint8ClampedArray(cb);
     data.forEach((pixelValue, index) => {
@@ -116,48 +112,47 @@ const imageDataFrom1Channel = (data, width, height) => {
 
 const drawOutputImage = (imageData, canvasId) => {
     // console.memory
-    console.log('[drawOutputImage]');
+    console.time(`drawOutputImage_${canvasId}`);
     const canvas = document.getElementById(canvasId);
-    console.log("canvas", canvas);
     canvas.width  = imageData.width;
     canvas.height = imageData.height;
-    console.log(imageData.constructor.name);
-    console.log('draw:: w', canvas.width, ', h = ', canvas.height);
     const ctx = canvas.getContext('2d');
     ctx.putImageData(imageData, 0, 0);
+    console.timeEnd(`drawOutputImage_${canvasId}`);
 };
 
 // https://shockry.blogspot.com/2017/04/webassembly-sending-javascript-array-to.html
 const returnImage = (Imaag) => {
+    console.time(`returnImage_channels_${Imaag.channels}`);
     const buffer =
         window.Module.HEAPU8.slice(Imaag.p_addr, Imaag.p_addr + Imaag.size);
     const imageData1 = Imaag.channels === 1
         ? imageDataFrom1Channel(buffer,  Imaag.width, Imaag.height)
         : imageDataFrom4Channels(buffer, Imaag.width, Imaag.height);
     // TODO: free heap?
-    // window.Module.HEAP8._fr
-    console.log("before", buffer);
-    window.Module._free(buffer);
-    console.log("after", buffer);
+    // window.Module._free(buffer);
+    console.timeEnd(`returnImage_channels_${Imaag.channels}`);
     return imageData1;
 };
 
 const convertTo = (form, preview = false) => {
+    console.time(`converto_${form.name}_${preview}`);
     const id = +form.id;
     let a = laneLines[form.name](form);
     let img = returnImage(a);
     n(img, id, preview);
+    console.timeEnd(`converto_${form.name}_${preview}`);
 };
 
 const n = (img, did = 1, preview = false) => {
+    let canvasId = `preview-image-${did}`;
     if (!preview) {
-        drawOutputImage(img, `output-image-${did + 1}`);
+        canvasId = `output-image-${did + 1}`;
         document.getElementById(`step-${did}`).style.display = 'none';
         document.getElementById(`step-${did + 1}`).style.display = 'block';
         laneLines.toNext();
-    } else {
-        drawOutputImage(img, `preview-image-${did}`);
     }
+    drawOutputImage(img, canvasId);
 };
 
 const getImage = () => {
