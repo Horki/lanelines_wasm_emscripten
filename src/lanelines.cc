@@ -98,7 +98,7 @@ void LaneLines::toNext() {
     img_buffer.copyTo(img_current);
 }
 
-Imaag LaneLines::getImaag() {
+Imaag LaneLines::getImaag() const {
     TimeDiff t("cc: getImaag() ");
     // https://emscripten.org/docs/porting/emscripten-runtime-environment.html#emscripten-memory-model
     int size = img_buffer.cols * img_buffer.rows * img_buffer.channels();

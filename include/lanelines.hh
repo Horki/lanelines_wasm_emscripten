@@ -61,7 +61,7 @@ public:
     void toHoughes(double rho, int threshold,
                    double min_theta, double max_theta, int thickness);
     void toNext();
-    Imaag getImaag();
+    Imaag getImaag() const;
 
 private:
     // TODO: Find a better way!
