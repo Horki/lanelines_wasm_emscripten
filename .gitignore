@@ -1,6 +1,9 @@
 # Generated JS and WASM
 static/LaneLines.*
 
+# Finished product
+web/
+
 
 # Build dir
 build/
