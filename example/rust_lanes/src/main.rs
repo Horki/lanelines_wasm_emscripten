@@ -5,12 +5,7 @@ use opencv::{
     types,
 };
 
-use std::{
-    env,
-    process,
-    time::Instant,
-    ops::Drop,
-};
+use std::{env, ops::Drop, process, time::Instant};
 
 struct Timer {
     n: String,
@@ -67,7 +62,7 @@ fn main() {
             sigma_y,
             core::BORDER_DEFAULT,
         )
-            .unwrap();
+        .unwrap();
     }
 
     // 3. Canny
@@ -84,7 +79,7 @@ fn main() {
             aperture,
             true,
         )
-            .unwrap();
+        .unwrap();
     }
 
     // 4 Region of Interest
@@ -101,7 +96,7 @@ fn main() {
         img_canny.channels().unwrap(),
         Scalar::new(0.0, 0.0, 0.0, 0.),
     )
-        .unwrap();
+    .unwrap();
     let mut ps = types::VectorOfMat::new();
     let mut p1 = unsafe { Mat::new_rows_cols(4, 2, i32::typ()) }.unwrap();
     p1.at_row_mut::<i32>(0)
@@ -133,8 +128,8 @@ fn main() {
         core::bitwise_and(&img_canny, &img_canny, &mut masked_edges, &mask).unwrap();
     }
     // 5. Hough Lines
-    let rho       = 1.0_f64;
-    let theta     = std::f64::consts::PI / 180.0_f64;
+    let rho = 1.0_f64;
+    let theta = std::f64::consts::PI / 180.0_f64;
     let threshold = 55_i32;
     let min_theta = 50.0_f64;
     let max_theta = 150.0_f64;
@@ -152,7 +147,7 @@ fn main() {
             min_theta,
             max_theta,
         )
-            .unwrap();
+        .unwrap();
         for l in lines.iter() {
             imgproc::line(
                 &mut img_result,
@@ -163,7 +158,7 @@ fn main() {
                 imgproc::LINE_8,
                 0,
             )
-                .unwrap();
+            .unwrap();
         }
     }
 
