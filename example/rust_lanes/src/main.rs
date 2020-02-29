@@ -5,7 +5,33 @@ use opencv::{
     types,
 };
 
-use std::{env, process};
+use std::{
+    env,
+    process,
+    time::Instant,
+    ops::Drop,
+};
+
+struct Timer {
+    n: String,
+    start: Instant,
+}
+
+impl Timer {
+    fn new(o: &str) -> Self {
+        Self {
+            n: o.to_string(),
+            start: Instant::now(),
+        }
+    }
+}
+
+impl Drop for Timer {
+    fn drop(&mut self) {
+        let stop = Instant::now();
+        println!("{}, duration {:?}", self.n, stop.duration_since(self.start));
+    }
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -14,43 +40,52 @@ fn main() {
         eprintln!("cargo run ../../img/img.jpg");
         process::exit(1);
     }
-    let img_original   = imgcodecs::imread(&args[1], imgcodecs::IMREAD_COLOR).unwrap();
-    let mut img_gray   = core::UMat::new(core::UMatUsageFlags::USAGE_DEFAULT).unwrap();
-    let mut img_gauss  = core::UMat::new(core::UMatUsageFlags::USAGE_DEFAULT).unwrap();
-    let mut img_canny  = core::UMat::new(core::UMatUsageFlags::USAGE_DEFAULT).unwrap();
+    let img_original = imgcodecs::imread(&args[1], imgcodecs::IMREAD_COLOR).unwrap();
+    let mut img_gray = core::UMat::new(core::UMatUsageFlags::USAGE_DEFAULT).unwrap();
+    let mut img_gauss = core::UMat::new(core::UMatUsageFlags::USAGE_DEFAULT).unwrap();
+    let mut img_canny = core::UMat::new(core::UMatUsageFlags::USAGE_DEFAULT).unwrap();
     let mut img_result = core::UMat::new(core::UMatUsageFlags::USAGE_DEFAULT).unwrap();
     img_original.copy_to(&mut img_result).unwrap();
 
     //  1. Convert to gray
-    imgproc::cvt_color(&img_original, &mut img_gray, imgproc::COLOR_RGB2GRAY, 0).unwrap();
+    {
+        let _timer = Timer::new("Convert to gray");
+        imgproc::cvt_color(&img_original, &mut img_gray, imgproc::COLOR_RGB2GRAY, 0).unwrap();
+    }
 
     // 2. Convert to gaussian
     let ksize = core::Size::new(5, 5);
     let sigma_x = 0.0_f64;
     let sigma_y = 0.0_f64;
-    imgproc::gaussian_blur(
-        &img_gray,
-        &mut img_gauss,
-        ksize,
-        sigma_x,
-        sigma_y,
-        core::BORDER_DEFAULT,
-    )
-    .unwrap();
+    {
+        let _timer = Timer::new("Convert to Gaussian");
+        imgproc::gaussian_blur(
+            &img_gray,
+            &mut img_gauss,
+            ksize,
+            sigma_x,
+            sigma_y,
+            core::BORDER_DEFAULT,
+        )
+            .unwrap();
+    }
 
     // 3. Canny
     let min_thresh = 128_f64;
     let max_thresh = 130_f64;
     let aperture = 3_i32;
-    imgproc::canny(
-        &img_gauss,
-        &mut img_canny,
-        min_thresh,
-        max_thresh,
-        aperture,
-        true,
-    )
-    .unwrap();
+    {
+        let _timer = Timer::new("Convert to canny");
+        imgproc::canny(
+            &img_gauss,
+            &mut img_canny,
+            min_thresh,
+            max_thresh,
+            aperture,
+            true,
+        )
+            .unwrap();
+    }
 
     // 4 Region of Interest
     // as here in dox https://git.io/Jv0A7
@@ -66,7 +101,7 @@ fn main() {
         img_canny.channels().unwrap(),
         Scalar::new(0.0, 0.0, 0.0, 0.),
     )
-    .unwrap();
+        .unwrap();
     let mut ps = types::VectorOfMat::new();
     let mut p1 = unsafe { Mat::new_rows_cols(4, 2, i32::typ()) }.unwrap();
     p1.at_row_mut::<i32>(0)
@@ -82,19 +117,21 @@ fn main() {
         .unwrap()
         .copy_from_slice(&[x_size, y_size]);
     ps.push(p1);
-    imgproc::fill_poly(
-        &mut mask,
-        &ps,
-        Scalar::new(255., 255., 255., 1.),
-        imgproc::LINE_8,
-        0,
-        Point::default(),
-    )
-    .unwrap();
     let mut masked_edges =
         Mat::new_rows_cols_with_default(y_size, x_size, Vec3b::typ(), Scalar::default()).unwrap();
-    core::bitwise_and(&img_canny, &img_canny, &mut masked_edges, &mask).unwrap();
-
+    {
+        let _timer = Timer::new("Region of interest");
+        imgproc::fill_poly(
+            &mut mask,
+            &ps,
+            Scalar::new(255., 255., 255., 1.),
+            imgproc::LINE_8,
+            0,
+            Point::default(),
+        )
+        .unwrap();
+        core::bitwise_and(&img_canny, &img_canny, &mut masked_edges, &mask).unwrap();
+    }
     // 5. Hough Lines
     let rho       = 1.0_f64;
     let theta     = std::f64::consts::PI / 180.0_f64;
@@ -104,27 +141,30 @@ fn main() {
     let mut lines = types::VectorOfVec4i::new();
     let red_color = Scalar::new(0.0, 0.0, 255.0, 1.0);
     let thickness = 5_i32;
-    imgproc::hough_lines_p(
-        &masked_edges,
-        &mut lines,
-        rho,
-        theta,
-        threshold,
-        min_theta,
-        max_theta,
-    )
-    .unwrap();
-    for l in lines.iter() {
-        imgproc::line(
-            &mut img_result,
-            core::Point::new(l[0], l[1]),
-            core::Point::new(l[2], l[3]),
-            red_color,
-            thickness,
-            imgproc::LINE_8,
-            0,
+    {
+        let _timer = Timer::new("Hough Lines");
+        imgproc::hough_lines_p(
+            &masked_edges,
+            &mut lines,
+            rho,
+            theta,
+            threshold,
+            min_theta,
+            max_theta,
         )
-        .unwrap();
+            .unwrap();
+        for l in lines.iter() {
+            imgproc::line(
+                &mut img_result,
+                core::Point::new(l[0], l[1]),
+                core::Point::new(l[2], l[3]),
+                red_color,
+                thickness,
+                imgproc::LINE_8,
+                0,
+            )
+                .unwrap();
+        }
     }
 
     // Load an image
