@@ -41,6 +41,7 @@ python -m http.server
 ![convert2result](img/res/05.png)
 
 ## TODO
+- [ ] Build with [Conan](https://conan.io/)
 - [ ] Upload photo feature
 - [ ] Better post build script
 - [ ] Exception handling (both C++ and JS)
