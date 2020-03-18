@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <memory>
 
 // Emscripten
 #include <emscripten/val.h>
@@ -15,7 +16,7 @@
 
 
 LaneLines::LaneLines(emscripten::val const & js_image) {
-    TimeDiff t("cc: Constructor: ");
+    auto t = std::make_unique<TimeDiff>("cc: Constructor: ");
     convertToMat(js_image);
     img_original.copyTo(img_current); // copy
 }
@@ -35,26 +36,26 @@ LaneLines::~LaneLines() {
 }
 
 void LaneLines::toGray() {
-    TimeDiff t("cc: toGray(): ");
+    auto t = std::make_unique<TimeDiff>("cc: toGray(): ");
     cv::cvtColor(img_current, img_buffer, cv::COLOR_RGBA2GRAY);
 }
 
 void LaneLines::toGaussian(int kernel, double sigma_x, double sigma_y) {
-    TimeDiff t("cc: toGaussian() ");
+    auto t = std::make_unique<TimeDiff>("cc: toGaussian() ");
     img_buffer.release();
     cv::GaussianBlur(img_current, img_buffer,
                      cv::Size(kernel, kernel), sigma_x, sigma_y);
 }
 
 void LaneLines::toCanny(double threshold_1, double threshold_2, int aperture) {
-    TimeDiff t("cc: toCanny() ");
+    auto t = std::make_unique<TimeDiff>("cc: toCanny() ");
     img_buffer.release();
     cv::Canny(img_current, img_buffer,
               threshold_1, threshold_2, aperture);
 }
 
 void LaneLines::toRegion(size_t x_1, size_t y_1, size_t x_2, size_t y_2) {
-    TimeDiff t("cc: toRegion() ");
+    auto t = std::make_unique<TimeDiff>("cc: toRegion() ");
     img_buffer.release();
     // https://docs.opencv.org/3.4/d3/d96/tutorial_basic_geometric_drawing.html
     assert(x_1 <= img_current.cols);
@@ -77,7 +78,7 @@ void LaneLines::toRegion(size_t x_1, size_t y_1, size_t x_2, size_t y_2) {
 
 void LaneLines::toHoughes(double rho, int threshold,
                double min_theta, double max_theta, int thickness) {
-    TimeDiff t("cc: toHoughes() ");
+    auto t = std::make_unique<TimeDiff>("cc: toHoughes() ");
     double theta = CV_PI / 180.0;
     std::vector<cv::Vec4i> lines;
     cv::HoughLinesP(img_current, lines, rho, theta, threshold, min_theta, max_theta);
@@ -94,12 +95,12 @@ void LaneLines::toHoughes(double rho, int threshold,
 }
 
 void LaneLines::toNext() {
-    TimeDiff t("cc: toNext() ");
+    auto t = std::make_unique<TimeDiff>("cc: toNext() ");
     img_buffer.copyTo(img_current);
 }
 
 Imaag LaneLines::getImaag() const {
-    TimeDiff t("cc: getImaag() ");
+    auto t = std::make_unique<TimeDiff>("cc: getImaag() ");
     // https://emscripten.org/docs/porting/emscripten-runtime-environment.html#emscripten-memory-model
     int size = img_buffer.cols * img_buffer.rows * img_buffer.channels();
     return {
@@ -114,7 +115,7 @@ Imaag LaneLines::getImaag() const {
 // private
 // TODO: Find a better way!
 void LaneLines::convertToMat(emscripten::val const & js_image) {
-    TimeDiff t("cc: convertToMat() ");
+    auto t = std::make_unique<TimeDiff>("cc: convertToMat() ");
     auto w       = js_image["width"].as<unsigned long>();
     auto h       = js_image["height"].as<unsigned long>();
     auto imgData = js_image["data"].as<emscripten::val>();
