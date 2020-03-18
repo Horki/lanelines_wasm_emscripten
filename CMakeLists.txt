@@ -4,14 +4,6 @@ project(LaneLines CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
-# Package is not compiling to emscripten target!!!
-# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-# find_package(OpenCV REQUIRED)
-
-# Conan build for emscripten is not working!!!
-# conan_basic_setup()
-# include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-
 include_directories($ENV{HOME}/opencv/include)
 include_directories($ENV{HOME}/opencv/build_wasm)
 file(GLOB opencv_include_modules "$ENV{HOME}/opencv/modules/*/include")
