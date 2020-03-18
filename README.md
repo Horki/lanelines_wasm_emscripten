@@ -15,12 +15,14 @@ cd build
 ${HOME}/emsdk/fastcomp/emscripten/emconfigure cmake ..
 # nproc for linux; sysctl -n hw.ncpu for OsX
 ${HOME}/emsdk/fastcomp/emscripten/emmake make -j $(nproc)
-cd ..
-# copy all project(wasm build, static, img) files to web/ dir
-python post_build.py
-cd web
-# init local instance
-python -m http.server
+```
+
+Or run make command
+
+```bash
+make build
+# make debug # build debug
+make serve
 ```
 
 ## Pipeline
