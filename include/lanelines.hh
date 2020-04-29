@@ -3,7 +3,7 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <string>
+#include <string_view>
 
 // Emscripten
 #include <emscripten/val.h>
@@ -23,10 +23,10 @@ class TimeDiff {
  private:
   std::clock_t start, stop;
   std::chrono::high_resolution_clock::time_point t_start, t_stop;
-  std::string s;
+  std::string_view s;
 
  public:
-  TimeDiff(const std::string& s)
+  TimeDiff(std::string_view s)
       : s(s),
         start(std::clock()),
         t_start(std::chrono::high_resolution_clock::now()) {}
