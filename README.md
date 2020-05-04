@@ -52,3 +52,4 @@ make serve
 - [ ] Check memory leaks
 - [ ] Add better UX/UI (without 3rd party lib, or JS framework)
 - [ ] Create static instance of app
+- [ ] Rewrite to Rust
