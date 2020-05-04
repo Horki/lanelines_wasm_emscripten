@@ -26,6 +26,7 @@ serve: build
 	cp ../build/LaneLines.* . && \
 	cp ../static/index.* . && \
 	cp ../static/style.css . && \
+	cp ../static/favicon.ico . && \
 	python -m http.server
 
 .PHONY: clean
