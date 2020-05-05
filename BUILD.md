@@ -44,11 +44,10 @@ def get_build_flags(self):
 
 ```sh
 cd $HOME
-wget --tries=5 "https://github.com/opencv/opencv/archive/3.4.7.zip"
-unzip 3.4.7.zip
-rm 3.4.7.zip             # optional
-mv opencv-3.4.7/ opencv/ # optional
-cd $HOME/opencv
+wget --tries=5 "https://github.com/opencv/opencv/archive/4.3.0.zip"
+unzip 4.3.0.zip
+rm 4.3.0.zip             # optional
+cd $HOME/opencv-4.3.0
 # Add WASM mem flags to build.js
 python ./platforms/js/build_js.py --build_wasm --emscripten_dir $HOME/emsdk/fastcomp/emscripten build_wasm
 ```

@@ -4,7 +4,7 @@
 This is a helper project to [Lane Lines project](https://github.com/Horki/CarND-LaneLines-P1)
 
 ## Run project
-This project uses [WASM OpenCV](https://docs.opencv.org/3.4/d4/da1/tutorial_js_setup.html) and [Emscripten](https://emscripten.org/).
+This project uses [WASM OpenCV](https://docs.opencv.org/4.3.0/d4/da1/tutorial_js_setup.html) and [Emscripten](https://emscripten.org/).
 core functionality was written in C++, JS for DOM manipulation and wrapper around C++ calls.
 
 More details on how to setup environment locally [here](BUILD.md).
