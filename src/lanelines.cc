@@ -1,19 +1,5 @@
 #include "lanelines.hh"
 
-// STD
-#include <cassert>
-#include <iostream>
-#include <memory>
-#include <vector>
-
-// Emscripten
-#include <emscripten/val.h>
-
-// OpenCV
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-
 LaneLines::LaneLines(emscripten::val const& js_image) {
   auto t = std::make_unique<TimeDiff>("cc: Constructor: ");
   convertToMat(js_image);
@@ -52,7 +38,8 @@ void LaneLines::toCanny(double threshold_1, double threshold_2, int aperture) {
   cv::Canny(img_current, img_buffer, threshold_1, threshold_2, aperture);
 }
 
-void LaneLines::toRegion(size_t x_1, size_t y_1, size_t x_2, size_t y_2) {
+void LaneLines::toRegion(const std::size_t x_1, const std::size_t y_1,
+                         const std::size_t x_2, const std::size_t y_2) {
   auto t = std::make_unique<TimeDiff>("cc: toRegion() ");
   img_buffer.release();
   // https://docs.opencv.org/3.4/d3/d96/tutorial_basic_geometric_drawing.html
@@ -65,8 +52,9 @@ void LaneLines::toRegion(size_t x_1, size_t y_1, size_t x_2, size_t y_2) {
   std::cout << "cc: x_1: " << x_1 << ", y_1: " << y_1 << std::endl;
   std::cout << "cc: x_2: " << x_2 << ", y_2: " << y_2 << std::endl;
   std::vector<std::vector<cv::Point>> points{
-      {cv::Point(0, img_current.rows), cv::Point(int(x_1), int(y_1)),
-       cv::Point(int(x_2), int(y_2)),
+      {cv::Point(0, img_current.rows),
+       cv::Point(static_cast<int>(x_1), static_cast<int>(y_1)),
+       cv::Point(static_cast<int>(x_2), static_cast<int>(y_2)),
        cv::Point(img_current.cols, img_current.rows)}};
   cv::fillPoly(mask, points, cv::Scalar(255, 255, 255));
   // select from canny image by polygon
@@ -109,7 +97,7 @@ Imaag LaneLines::getImaag() const {
 
 // private
 // TODO: Find a better way!
-void LaneLines::convertToMat(emscripten::val const& js_image) {
+void LaneLines::convertToMat(const emscripten::val& js_image) {
   auto t = std::make_unique<TimeDiff>("cc: convertToMat() ");
   auto w = js_image["width"].as<unsigned long>();
   auto h = js_image["height"].as<unsigned long>();

@@ -1,15 +1,19 @@
 // STD
+#include <cassert>
 #include <chrono>
-#include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <string_view>
+#include <vector>
 
 // Emscripten
 #include <emscripten/val.h>
 
 // OpenCV
 #include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
 
 struct Imaag {
   int width;
@@ -50,14 +54,15 @@ class LaneLines {
   cv::Mat img_buffer;
 
  public:
-  LaneLines(emscripten::val const& js_image);
+  LaneLines(const emscripten::val& js_image);
   LaneLines(const cv::Mat& img);
   LaneLines(cv::Mat&& img);
   ~LaneLines();
   void toGray();
   void toGaussian(int kernel, double sigma_x, double sigma_y);
   void toCanny(double threshold_1, double threshold_2, int aperture);
-  void toRegion(size_t x_1, size_t y_1, size_t x_2, size_t y_2);
+  void toRegion(const std::size_t x_1, const std::size_t y_1,
+                const std::size_t x_2, const std::size_t y_2);
   void toHoughes(double rho, int threshold, double min_theta, double max_theta,
                  int thickness);
   void toNext();
@@ -65,5 +70,5 @@ class LaneLines {
 
  private:
   // TODO: Find a better way!
-  void convertToMat(emscripten::val const& js_image);
+  void convertToMat(const emscripten::val& js_image);
 };
