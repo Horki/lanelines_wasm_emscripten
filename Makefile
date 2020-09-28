@@ -21,13 +21,10 @@ debug:
 .PHONY: serve
 serve: build
 	mkdir -p web
-	cd web && \
-	cp ../img/img.jpg . && \
-	cp ../build/LaneLines.* . && \
-	cp ../static/index.* . && \
-	cp ../static/style.css . && \
-	cp ../static/favicon.ico . && \
-	python -m http.server
+	cp static/* web/
+	cp img/img.jpg web/
+	cp build/LaneLines.* web/
+	basic-http-server web
 
 .PHONY: clean
 clean:
