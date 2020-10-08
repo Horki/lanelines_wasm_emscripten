@@ -32,7 +32,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
         eprintln!("usage");
-        eprintln!("cargo run ../../img/img.jpg");
+        eprintln!("cargo run ../../img/img.webp");
         process::exit(1);
     }
     let img_original = imgcodecs::imread(&args[1], imgcodecs::IMREAD_COLOR).unwrap();

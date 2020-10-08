@@ -22,7 +22,7 @@ debug:
 serve: build
 	mkdir -p web
 	cp static/* web/
-	cp img/img.jpg web/
+	cp img/img.webp web/
 	cp build/LaneLines.* web/
 	basic-http-server web
 

@@ -10,7 +10,7 @@
 int main(int argc, const char* argv[]) {
   if (argc != 2) {
     std::cerr << "usage\n";
-    std::cerr << "/bin/opencv ../../img/img.jpg";
+    std::cerr << "/bin/opencv ../../img/img.webp";
     return -1;
   }
   cv::Mat img_original = cv::imread(argv[1]);
