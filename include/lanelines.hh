@@ -54,21 +54,21 @@ class LaneLines {
   cv::Mat img_buffer;
 
  public:
-  LaneLines(const emscripten::val& js_image);
-  LaneLines(const cv::Mat& img);
-  LaneLines(cv::Mat&& img);
+  LaneLines(const emscripten::val&);
+  LaneLines(const cv::Mat&);
+  LaneLines(cv::Mat&&);
   ~LaneLines();
   void toGray();
-  void toGaussian(int kernel, double sigma_x, double sigma_y);
-  void toCanny(double threshold_1, double threshold_2, int aperture);
-  void toRegion(const std::size_t x_1, const std::size_t y_1,
-                const std::size_t x_2, const std::size_t y_2);
-  void toHoughes(double rho, int threshold, double min_theta, double max_theta,
-                 int thickness);
+  void toGaussian(const int, const double, const double);
+  void toCanny(const double, const double, const int);
+  void toRegion(const std::size_t, const std::size_t, const std::size_t,
+                const std::size_t);
+  void toHoughes(const double, const int, const double, const double,
+                 const int);
   void toNext();
   Imaag getImaag() const;
 
  private:
   // TODO: Find a better way!
-  void convertToMat(const emscripten::val& js_image);
+  void convertToMat(const emscripten::val&);
 };

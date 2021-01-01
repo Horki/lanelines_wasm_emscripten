@@ -19,7 +19,7 @@ debug:
 	${HOME}/emsdk/fastcomp/emscripten/emmake make
 
 .PHONY: serve
-serve: build
+serve:
 	mkdir -p web
 	cp static/* web/
 	cp img/img.webp web/

@@ -25,14 +25,16 @@ void LaneLines::toGray() {
   cv::cvtColor(img_current, img_buffer, cv::COLOR_RGBA2GRAY);
 }
 
-void LaneLines::toGaussian(int kernel, double sigma_x, double sigma_y) {
+void LaneLines::toGaussian(const int kernel, const double sigma_x,
+                           const double sigma_y) {
   auto t = std::make_unique<TimeDiff>("cc: toGaussian() ");
   img_buffer.release();
   cv::GaussianBlur(img_current, img_buffer, cv::Size(kernel, kernel), sigma_x,
                    sigma_y);
 }
 
-void LaneLines::toCanny(double threshold_1, double threshold_2, int aperture) {
+void LaneLines::toCanny(const double threshold_1, const double threshold_2,
+                        const int aperture) {
   auto t = std::make_unique<TimeDiff>("cc: toCanny() ");
   img_buffer.release();
   cv::Canny(img_current, img_buffer, threshold_1, threshold_2, aperture);
@@ -61,10 +63,11 @@ void LaneLines::toRegion(const std::size_t x_1, const std::size_t y_1,
   cv::bitwise_and(img_current, img_current, img_buffer, mask);
 }
 
-void LaneLines::toHoughes(double rho, int threshold, double min_theta,
-                          double max_theta, int thickness) {
+void LaneLines::toHoughes(const double rho, const int threshold,
+                          const double min_theta, const double max_theta,
+                          const int thickness) {
   auto t = std::make_unique<TimeDiff>("cc: toHoughes() ");
-  double theta = CV_PI / 180.0;
+  constexpr double theta = CV_PI / 180.0;
   std::vector<cv::Vec4i> lines;
   cv::HoughLinesP(img_current, lines, rho, theta, threshold, min_theta,
                   max_theta);
