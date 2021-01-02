@@ -9,17 +9,17 @@ format:
 build:
 	mkdir -p build
 	cd build && \
-	${HOME}/emsdk/fastcomp/emscripten/emconfigure cmake .. && \
-	${HOME}/emsdk/fastcomp/emscripten/emmake make
+	${HOME}/emsdk/upstream/emscripten/emcmake cmake .. && \
+	${HOME}/emsdk/upstream/emscripten/emmake make -j 8
 .PHONY: debug
 debug:
 	mkdir -p build
 	cd build && \
-	${HOME}/emsdk/fastcomp/emscripten/emconfigure cmake -DCMAKE_BUILD_TYPE=debug .. && \
-	${HOME}/emsdk/fastcomp/emscripten/emmake make
+	${HOME}/emsdk/upstream/emscripten/emcmake cmake -DCMAKE_BUILD_TYPE=debug .. && \
+	${HOME}/emsdk/upstream/emscripten/emmake make -j 8
 
 .PHONY: serve
-serve:
+serve: build
 	mkdir -p web
 	cp static/* web/
 	cp img/img.webp web/
