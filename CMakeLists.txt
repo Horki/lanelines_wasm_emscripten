@@ -3,15 +3,15 @@ cmake_minimum_required(VERSION 3.11.3)
 project(LaneLines CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-set(OPENCV_430_PATH $ENV{HOME}/opencv-4.3.0)
+set(OPENCV_PATH opencv)
 
-include_directories(${OPENCV_430_PATH}/include)
-include_directories(${OPENCV_430_PATH}/build_wasm)
-file(GLOB opencv_include_modules "${OPENCV_430_PATH}/modules/*/include")
+include_directories(${OPENCV_PATH}/include)
+include_directories(${OPENCV_PATH}/build_wasm)
+file(GLOB opencv_include_modules "${OPENCV_PATH}/modules/*/include")
 include_directories(${opencv_include_modules})
 
-file(GLOB opencv_core "${OPENCV_430_PATH}/build_wasm/lib/*.a")
-file(GLOB opencv_lib_core "${OPENCV_430_PATH}/build_wasm/lib/libopencv_core.a")
+file(GLOB opencv_core "${OPENCV_PATH}/build_wasm/lib/*.a")
+file(GLOB opencv_lib_core "${OPENCV_PATH}/build_wasm/lib/libopencv_core.a")
 
 file(GLOB source_files src/*.cc)
 
