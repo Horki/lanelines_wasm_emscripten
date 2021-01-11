@@ -17,14 +17,14 @@ format:
 build:
 	mkdir -p build
 	cd build && \
-	${HOME}/emsdk/upstream/emscripten/emcmake cmake .. && \
-	${HOME}/emsdk/upstream/emscripten/emmake make -j ${NPROC}
+	emcmake cmake .. && \
+	emmake make -j ${NPROC}
 .PHONY: debug
 debug:
 	mkdir -p build
 	cd build && \
-	${HOME}/emsdk/upstream/emscripten/emcmake cmake -DCMAKE_BUILD_TYPE=debug .. && \
-	${HOME}/emsdk/upstream/emscripten/emmake make -j ${NPROC}
+	emcmake cmake -DCMAKE_BUILD_TYPE=debug .. && \
+	emmake make -j ${NPROC}
 
 .PHONY: serve
 serve: build
