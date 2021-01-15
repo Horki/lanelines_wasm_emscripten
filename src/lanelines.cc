@@ -6,16 +6,6 @@ LaneLines::LaneLines(emscripten::val const& js_image) {
   img_original.copyTo(img_current);  // copy
 }
 
-LaneLines::LaneLines(const cv::Mat& img) {
-  img_original = img;
-  img_buffer = img;
-}
-
-LaneLines::LaneLines(cv::Mat&& img) {
-  img_original = std::move(img);
-  img_original.copyTo(img_buffer);
-}
-
 LaneLines::~LaneLines() {
   std::cout << "Here I will do some memory GC" << std::endl;
 }

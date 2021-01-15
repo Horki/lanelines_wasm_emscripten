@@ -1,3 +1,6 @@
+#ifndef LANE_LINES_HH_
+#define LANE_LINES_HH_
+
 // STD
 #include <cassert>
 #include <chrono>
@@ -30,7 +33,7 @@ class TimeDiff {
   std::string_view s;
 
  public:
-  TimeDiff(std::string_view s)
+  explicit TimeDiff(std::string_view s)
       : s(s),
         start(std::clock()),
         t_start(std::chrono::high_resolution_clock::now()) {}
@@ -54,9 +57,13 @@ class LaneLines {
   cv::Mat img_buffer;
 
  public:
-  LaneLines(const emscripten::val&);
-  LaneLines(const cv::Mat&);
-  LaneLines(cv::Mat&&);
+  explicit LaneLines(const emscripten::val&);
+  // Forbid copy
+  LaneLines(const LaneLines&) = delete;
+  LaneLines& operator=(const LaneLines&) = delete;
+  // Forbid move
+  LaneLines(LaneLines&&) = delete;
+  LaneLines& operator=(LaneLines&&) = delete;
   ~LaneLines();
   void toGray();
   void toGaussian(const int, const double, const double);
@@ -72,3 +79,5 @@ class LaneLines {
   // TODO: Find a better way!
   void convertToMat(const emscripten::val&);
 };
+
+#endif
