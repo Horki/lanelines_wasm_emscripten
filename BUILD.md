@@ -55,7 +55,7 @@ git submodule update --init --recursive
 # Build OpenCV
 cd opencv
 # Make sure python v3.4+
-python ./platforms/js/build_js.py --build_wasm --emscripten_dir $HOME/emsdk/fastcomp/emscripten build_wasm
+python ./platforms/js/build_js.py --build_wasm --emscripten_dir $HOME/emsdk/upstream/emscripten build_wasm
 source ${HOME}/emsdk/emsdk_env.sh
 cd ..
 # Build
