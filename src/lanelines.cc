@@ -30,8 +30,8 @@ void LaneLines::toCanny(const double threshold_1, const double threshold_2,
   cv::Canny(img_current, img_buffer, threshold_1, threshold_2, aperture);
 }
 
-void LaneLines::toRegion(const std::size_t x_1, const std::size_t y_1,
-                         const std::size_t x_2, const std::size_t y_2) {
+void LaneLines::toRegion(const int x_1, const int y_1, const int x_2,
+                         const int y_2) {
   auto t = std::make_unique<TimeDiff>("cc: toRegion() ");
   img_buffer.release();
   // https://docs.opencv.org/3.4/d3/d96/tutorial_basic_geometric_drawing.html
@@ -44,9 +44,7 @@ void LaneLines::toRegion(const std::size_t x_1, const std::size_t y_1,
   std::cout << "cc: x_1: " << x_1 << ", y_1: " << y_1 << std::endl;
   std::cout << "cc: x_2: " << x_2 << ", y_2: " << y_2 << std::endl;
   std::vector<std::vector<cv::Point>> points{
-      {cv::Point(0, img_current.rows),
-       cv::Point(static_cast<int>(x_1), static_cast<int>(y_1)),
-       cv::Point(static_cast<int>(x_2), static_cast<int>(y_2)),
+      {cv::Point(0, img_current.rows), cv::Point(x_1, y_1), cv::Point(x_2, y_2),
        cv::Point(img_current.cols, img_current.rows)}};
   cv::fillPoly(mask, points, cv::Scalar(255, 255, 255));
   // select from canny image by polygon

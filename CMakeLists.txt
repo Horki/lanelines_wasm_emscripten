@@ -5,6 +5,13 @@ project(LaneLines CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(OPENCV_PATH opencv)
 
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+# Most Warnings for clang
+add_compile_options(-Wall -Wextra -pedantic -Werror)
+
 include_directories(${OPENCV_PATH}/include)
 include_directories(${OPENCV_PATH}/build_wasm)
 file(GLOB opencv_include_modules "${OPENCV_PATH}/modules/*/include")

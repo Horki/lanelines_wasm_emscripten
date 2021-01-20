@@ -28,15 +28,15 @@ struct Imaag {
 
 class TimeDiff {
  private:
+  std::string_view s;
   std::clock_t start, stop;
   std::chrono::high_resolution_clock::time_point t_start, t_stop;
-  std::string_view s;
 
  public:
   explicit TimeDiff(std::string_view s)
-      : s(s),
-        start(std::clock()),
-        t_start(std::chrono::high_resolution_clock::now()) {}
+      : s{s},
+        start{std::clock()},
+        t_start{std::chrono::high_resolution_clock::now()} {}
   ~TimeDiff() {
     stop = std::clock();
     t_stop = std::chrono::high_resolution_clock::now();
@@ -68,8 +68,7 @@ class LaneLines {
   void toGray();
   void toGaussian(const int, const double, const double);
   void toCanny(const double, const double, const int);
-  void toRegion(const std::size_t, const std::size_t, const std::size_t,
-                const std::size_t);
+  void toRegion(const int, const int, const int, const int);
   void toHoughes(const double, const int, const double, const double,
                  const int);
   void toNext();
