@@ -5,10 +5,6 @@ project(LaneLines CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(OPENCV_PATH opencv)
 
-if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-
 # Most Warnings for clang
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 

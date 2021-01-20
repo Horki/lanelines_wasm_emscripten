@@ -29,8 +29,8 @@ struct Imaag {
 class TimeDiff {
  private:
   std::string_view s;
-  std::clock_t start, stop;
-  std::chrono::high_resolution_clock::time_point t_start, t_stop;
+  std::clock_t start;
+  std::chrono::high_resolution_clock::time_point t_start;
 
  public:
   explicit TimeDiff(std::string_view s)
@@ -38,8 +38,8 @@ class TimeDiff {
         start{std::clock()},
         t_start{std::chrono::high_resolution_clock::now()} {}
   ~TimeDiff() {
-    stop = std::clock();
-    t_stop = std::chrono::high_resolution_clock::now();
+    auto stop = std::clock();
+    auto t_stop = std::chrono::high_resolution_clock::now();
     auto t_duration =
         std::chrono::duration<double, std::milli>(t_stop - t_start).count();
     auto duration = stop - start;

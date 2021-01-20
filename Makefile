@@ -17,13 +17,13 @@ format:
 build:
 	mkdir -p build
 	cd build && \
-	emcmake cmake .. && \
+	emcmake cmake -DCMAKE_BUILD_TYPE=Release .. && \
 	emmake make -j ${NPROC}
 .PHONY: debug
 debug:
 	mkdir -p build
 	cd build && \
-	emcmake cmake -DCMAKE_BUILD_TYPE=debug .. && \
+	emcmake cmake -DCMAKE_BUILD_TYPE=Debug .. && \
 	emmake make -j ${NPROC}
 
 .PHONY: serve
