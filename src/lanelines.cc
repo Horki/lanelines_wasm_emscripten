@@ -61,10 +61,11 @@ void LaneLines::toHoughes(const double rho, const int threshold,
                   max_theta);
   img_original.copyTo(img_buffer);
 
+  const auto red_color{cv::Scalar{255, 0, 0, 255}};
+
   for (const auto& l : lines) {
     cv::line(img_buffer, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]),
-             cv::Scalar(0, 0, 255),  // red
-             thickness);
+             red_color, thickness);
   }
 }
 
@@ -90,12 +91,12 @@ Imaag LaneLines::getImaag() const {
 // TODO: Find a better way!
 void LaneLines::convertToMat(const emscripten::val& js_image) {
   auto t = std::make_unique<TimeDiff>("cc: convertToMat() ");
-  auto w = js_image["width"].as<unsigned long>();
-  auto h = js_image["height"].as<unsigned long>();
+  auto w = js_image["width"].as<int>();
+  auto h = js_image["height"].as<int>();
   auto imgData = js_image["data"].as<emscripten::val>();
   img_original.create(h, w, CV_8UC4);
-  auto length = imgData["length"].as<unsigned int>();
-  std::uint8_t* destBuffer = img_original.data;
-  emscripten::val memoryView(emscripten::typed_memory_view(length, destBuffer));
+  auto length = imgData["length"].as<std::size_t>();
+  emscripten::val memoryView{
+      emscripten::typed_memory_view(length, img_original.data)};
   memoryView.call<void>("set", imgData);
 }
