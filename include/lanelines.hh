@@ -46,7 +46,7 @@ class TimeDiff {
     auto duration = stop - start;
     std::cout << std::fixed << std::setprecision(2) << s
               << "it took: " << duration << " clicks, "
-              << " CPU time used: " << ((1000.0 * duration) / CLOCKS_PER_SEC)
+              << " CPU time used: " << ((1'000.0 * duration) / CLOCKS_PER_SEC)
               << " ms; Wall clock time " << t_duration << " ms" << std::endl;
   }
 };
