@@ -18,13 +18,13 @@ build:
 	mkdir -p build
 	cd build && \
 	emcmake cmake -DCMAKE_BUILD_TYPE=Release .. && \
-	emmake make -j ${NPROC}
+	emmake make VERBOSE=1 -j ${NPROC}
 .PHONY: debug
 debug:
 	mkdir -p build
 	cd build && \
 	emcmake cmake -DCMAKE_BUILD_TYPE=Debug .. && \
-	emmake make -j ${NPROC}
+	emmake make VERBOSE=1 -j ${NPROC}
 
 .PHONY: serve
 serve: build

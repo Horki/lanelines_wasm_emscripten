@@ -3,10 +3,21 @@ cmake_minimum_required(VERSION 3.11.3)
 project(LaneLines CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(OPENCV_PATH opencv)
 
 # Most Warnings for clang
 add_compile_options(-Wall -Wextra -pedantic -Werror)
+
+if (${CMAKE_BUILD_TYPE} MATCHES Debug)
+  message("set debug properties with sanitarzes")
+  set(target_properties "-fsanitize=address  -fsanitize=leak -g")
+endif ()
+
+if (${CMAKE_BUILD_TYPE} MATCHES Release)
+  message("set release properties")
+  set(target_properties "-03 --closure 1")
+endif ()
 
 include_directories(${OPENCV_PATH}/include)
 include_directories(${OPENCV_PATH}/build_wasm)
@@ -25,9 +36,7 @@ target_include_directories(${PROJECT_NAME}
    ${PROJECT_SOURCE_DIR}/include)
 set_target_properties(${PROJECT_NAME}
   PROPERTIES LINK_FLAGS
-    "-O3 \
-    --llvm-lto 1 \
-    --closure 1 \
+    "${target_properties} \
     --bind \
     -s DEMANGLE_SUPPORT=1 \
     -s USE_ZLIB=1 \
