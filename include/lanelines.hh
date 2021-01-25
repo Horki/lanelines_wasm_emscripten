@@ -2,6 +2,7 @@
 #define LANE_LINES_HH_
 
 // STD
+#include <array>
 #include <cassert>
 #include <chrono>
 #include <iomanip>
@@ -64,7 +65,7 @@ class LaneLines {
   // Forbid move
   LaneLines(LaneLines&&) = delete;
   LaneLines& operator=(LaneLines&&) = delete;
-  ~LaneLines();
+  ~LaneLines() = default;
   void toGray();
   void toGaussian(const int, const double, const double);
   void toCanny(const double, const double, const int);
@@ -72,11 +73,12 @@ class LaneLines {
   void toHoughes(const double, const int, const double, const double,
                  const int);
   void toNext();
-  Imaag getImaag() const;
+  [[nodiscard]] Imaag getImaag() const;
 
  private:
   // TODO: Find a better way!
   void convertToMat(const emscripten::val&);
+  static constexpr double theta() noexcept { return CV_PI / 180.0; }
 };
 
 #endif

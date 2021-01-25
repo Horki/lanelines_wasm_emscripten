@@ -6,10 +6,6 @@ LaneLines::LaneLines(emscripten::val const& js_image) {
   img_original.copyTo(img_current);  // copy
 }
 
-LaneLines::~LaneLines() {
-  std::cout << "Here I will do some memory GC" << std::endl;
-}
-
 void LaneLines::toGray() {
   auto t = std::make_unique<TimeDiff>("cc: toGray(): ");
   cv::cvtColor(img_current, img_buffer, cv::COLOR_RGBA2GRAY);
@@ -39,13 +35,13 @@ void LaneLines::toRegion(const int x_1, const int y_1, const int x_2,
   assert(y_1 <= img_current.rows);
   assert(x_2 <= img_current.cols);
   assert(y_2 <= img_current.rows);
-  cv::Mat mask = cv::Mat::zeros(img_current.rows, img_current.cols,
-                                img_current.channels());
+  const cv::Mat mask{cv::Mat::zeros(img_current.rows, img_current.cols,
+                                    img_current.channels())};
   std::cout << "cc: x_1: " << x_1 << ", y_1: " << y_1 << std::endl;
   std::cout << "cc: x_2: " << x_2 << ", y_2: " << y_2 << std::endl;
-  std::vector<std::vector<cv::Point>> points{
-      {cv::Point(0, img_current.rows), cv::Point(x_1, y_1), cv::Point(x_2, y_2),
-       cv::Point(img_current.cols, img_current.rows)}};
+  const std::array<cv::Point, 4> points{
+      cv::Point(0, img_current.rows), cv::Point(x_1, y_1), cv::Point(x_2, y_2),
+      cv::Point(img_current.cols, img_current.rows)};
   cv::fillPoly(mask, points, cv::Scalar(255, 255, 255));
   // select from canny image by polygon
   cv::bitwise_and(img_current, img_current, img_buffer, mask);
@@ -55,9 +51,8 @@ void LaneLines::toHoughes(const double rho, const int threshold,
                           const double min_theta, const double max_theta,
                           const int thickness) {
   auto t = std::make_unique<TimeDiff>("cc: toHoughes() ");
-  constexpr double theta = CV_PI / 180.0;
   std::vector<cv::Vec4i> lines;
-  cv::HoughLinesP(img_current, lines, rho, theta, threshold, min_theta,
+  cv::HoughLinesP(img_current, lines, rho, theta(), threshold, min_theta,
                   max_theta);
   img_original.copyTo(img_buffer);
 
@@ -77,7 +72,7 @@ void LaneLines::toNext() {
 Imaag LaneLines::getImaag() const {
   auto t = std::make_unique<TimeDiff>("cc: getImaag() ");
   // https://emscripten.org/docs/porting/emscripten-runtime-environment.html#emscripten-memory-model
-  int size = img_buffer.cols * img_buffer.rows * img_buffer.channels();
+  auto size{img_buffer.cols * img_buffer.rows * img_buffer.channels()};
   return {
       img_buffer.cols,                        // Width
       img_buffer.rows,                        // Height
@@ -91,11 +86,11 @@ Imaag LaneLines::getImaag() const {
 // TODO: Find a better way!
 void LaneLines::convertToMat(const emscripten::val& js_image) {
   auto t = std::make_unique<TimeDiff>("cc: convertToMat() ");
-  auto w = js_image["width"].as<int>();
-  auto h = js_image["height"].as<int>();
-  auto imgData = js_image["data"].as<emscripten::val>();
+  auto w{js_image["width"].as<int>()};
+  auto h{js_image["height"].as<int>()};
+  auto imgData{js_image["data"].as<emscripten::val>()};
   img_original.create(h, w, CV_8UC4);
-  auto length = imgData["length"].as<std::size_t>();
+  auto length{imgData["length"].as<std::size_t>()};
   emscripten::val memoryView{
       emscripten::typed_memory_view(length, img_original.data)};
   memoryView.call<void>("set", imgData);
