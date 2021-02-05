@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11.3)
 
 project(LaneLines CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(OPENCV_PATH opencv)
 
