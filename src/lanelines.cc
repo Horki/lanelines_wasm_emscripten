@@ -1,18 +1,22 @@
 #include "lanelines.hh"
 
-LaneLines::LaneLines(emscripten::val const& js_image) {
+LaneLines::LaneLines(emscripten::val const& js_image, const State& s) {
+  state = s;
   auto t = std::make_unique<TimeDiff>("cc: Constructor: ");
   convertToMat(js_image);
   img_original.copyTo(img_current);  // copy
 }
 
 void LaneLines::toGray() {
+  // TODO: figure out more elegant way for state validation
+  assert(state == State::INIT);
   auto t = std::make_unique<TimeDiff>("cc: toGray(): ");
   cv::cvtColor(img_current, img_buffer, cv::COLOR_RGBA2GRAY);
 }
 
 void LaneLines::toGaussian(const int kernel, const double sigma_x,
                            const double sigma_y) {
+  assert(state == State::GRAY);
   auto t = std::make_unique<TimeDiff>("cc: toGaussian() ");
   img_buffer.release();
   cv::GaussianBlur(img_current, img_buffer, cv::Size(kernel, kernel), sigma_x,
@@ -21,6 +25,7 @@ void LaneLines::toGaussian(const int kernel, const double sigma_x,
 
 void LaneLines::toCanny(const double threshold_1, const double threshold_2,
                         const int aperture) {
+  assert(state == State::GAUSSIAN);
   auto t = std::make_unique<TimeDiff>("cc: toCanny() ");
   img_buffer.release();
   cv::Canny(img_current, img_buffer, threshold_1, threshold_2, aperture);
@@ -28,9 +33,11 @@ void LaneLines::toCanny(const double threshold_1, const double threshold_2,
 
 void LaneLines::toRegion(const int x_1, const int y_1, const int x_2,
                          const int y_2) {
+  assert(state == State::CANNY);
   auto t = std::make_unique<TimeDiff>("cc: toRegion() ");
   img_buffer.release();
   // https://docs.opencv.org/3.4/d3/d96/tutorial_basic_geometric_drawing.html
+  // TODO: Remove asserts in future!
   assert(x_1 <= img_current.cols);
   assert(y_1 <= img_current.rows);
   assert(x_2 <= img_current.cols);
@@ -50,6 +57,7 @@ void LaneLines::toRegion(const int x_1, const int y_1, const int x_2,
 void LaneLines::toHoughes(const double rho, const int threshold,
                           const double min_theta, const double max_theta,
                           const int thickness) {
+  assert(state==State::REGION);
   auto t = std::make_unique<TimeDiff>("cc: toHoughes() ");
   std::vector<cv::Vec4i> lines;
   cv::HoughLinesP(img_current, lines, rho, theta(), threshold, min_theta,
@@ -67,6 +75,7 @@ void LaneLines::toHoughes(const double rho, const int threshold,
 void LaneLines::toNext() {
   auto t = std::make_unique<TimeDiff>("cc: toNext() ");
   img_buffer.copyTo(img_current);
+  ++state;
 }
 
 Imaag LaneLines::getImaag() const {

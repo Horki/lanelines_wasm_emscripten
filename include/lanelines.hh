@@ -27,6 +27,22 @@ struct Imaag {
   int p_addr;  // Stored in HEAP
 };
 
+// TODO: Use PIMPL idiom
+enum class State : char {
+  INIT = 1,
+  GRAY,
+  GAUSSIAN,
+  CANNY,
+  REGION,
+  HOUGHES,
+};
+
+inline void operator++(State& s) {
+  const auto i = static_cast<unsigned short>(s);
+  std::cout << "Current state: " << i + 1 << std::endl;
+  s = (s != State::HOUGHES) ? static_cast<State>(i + 1) : s;
+}
+
 class TimeDiff {
  private:
   std::string_view s;
@@ -56,9 +72,10 @@ class LaneLines {
   cv::Mat img_original;
   cv::Mat img_current;
   cv::Mat img_buffer;
+  State state;
 
  public:
-  explicit LaneLines(const emscripten::val&);
+  LaneLines(const emscripten::val&, const State& s = State::INIT);
   // Forbid copy
   LaneLines(const LaneLines&) = delete;
   LaneLines& operator=(const LaneLines&) = delete;
@@ -73,7 +90,7 @@ class LaneLines {
   void toHoughes(const double, const int, const double, const double,
                  const int);
   void toNext();
-  [[nodiscard]] Imaag getImaag() const;
+  [[nodiscard("Must use image object")]] Imaag getImaag() const;
 
  private:
   // TODO: Find a better way!
